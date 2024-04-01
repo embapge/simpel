@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->dropColumn("deleted_at");
+        Schema::table('transaction_sub_types', function (Blueprint $table) {
+            $table->renameColumn("transaction_id", "transaction_type_id");
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customers', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('transaction_sub_types', function (Blueprint $table) {
+            $table->renameColumn("transaction_type_id", "transaction_id");
         });
     }
 };

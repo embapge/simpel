@@ -20,4 +20,14 @@ class Document extends Model
     {
         return DocumentFactory::new();
     }
+
+    public function transactionTemplates()
+    {
+        return $this->belongsToMany(TransactionDocumentTemplate::class, "transaction_document_template_details", "document_id", "transaction_document_template_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id"])->using(TransactionDocumentTemplateDetail::class);
+    }
+
+    public function transactionSubTypeTemplates()
+    {
+        return $this->belongsToMany(TransactionSubType::class, "transaction_document_template_details", "document_id", "transaction_sub_type_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id"])->using(TransactionDocumentTemplateDetail::class);
+    }
 }

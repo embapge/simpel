@@ -4,6 +4,7 @@ namespace App\Livewire\Customer;
 
 use App\Livewire\Forms\CustomerForm;
 use App\Models\Customer;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Js;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -43,20 +44,13 @@ class UpdateForm extends Component
         $this->form->resetCustom();
         $this->form->setCustomer(Customer::with(["emails", "phones"])->where("id", $customer)->first());
 
-        $this->js('
-        flatpickr(document.querySelectorAll("#CustomerUpdateModal input[name=established]"), {
-            altInput: true,
-            altFormat: "d F Y",
-            dateFormat: "Y-m-d",
-            defaultDate: "' . $this->form->established . '"
-        }); 
-        
-        $("#CustomerUpdateModal").modal("show");');
+        $this->js('$("#CustomerUpdateModal").modal("show");');
     }
 
     public function update()
     {
         $this->form->patch();
+        $this->form->resetCustom();
         $this->dispatch("customerRefreshTable");
         $this->js("$('#CustomerUpdateModal').modal('hide')");
     }
@@ -64,5 +58,17 @@ class UpdateForm extends Component
     public function render()
     {
         return view('livewire.customer.update-form');
+    }
+
+    #[On("customer-destroy")]
+    public function destroy(array $customers)
+    {
+        $this->form->destroy($customers);
+    }
+
+    #[On("customerResetForm")]
+    public function resetCustom()
+    {
+        $this->form->resetCustom();
     }
 }

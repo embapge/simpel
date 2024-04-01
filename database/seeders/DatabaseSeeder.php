@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Document;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -19,6 +20,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             CustomerSeeder::class,
+            DocumentSeeder::class,
         ]);
     }
 }

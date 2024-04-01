@@ -17,5 +17,13 @@ Route::middleware([
 
     Route::get("/customer", function () {
         return view("customer.index");
-    });
+    })->name("customer");
+
+    Route::get("/document", function () {
+        return view("document.index");
+    })->name("document");
+
+    Route::get("/transaction", function () {
+        return view("transaction.index");
+    })->name("transaction");
 });

@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->uuid("id");
             $table->string("name", 50);
-            $table->string("pic_name", 50)->nullable();
-            $table->string("group", 50)->nullable();
-            $table->enum("type", ["homeEquipment", "garment", "stationary", "food", "shipping"]);
-            $table->date("established")->nullable();
+            $table->string("pic_name", 50);
+            $table->text("address");
+            $table->string("email", 50)->unique();
+            $table->dateTime("verify_at")->nullable();
+            $table->string("phone_number", 50)->unique();
             $table->text("website")->nullable();
             $table->timestamps();
-            $table->softDeletes();
             $table->foreignUuid('created_by')->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignUuid('updated_by')->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->primary("id");

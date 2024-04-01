@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customer_emails', function (Blueprint $table) {
-            $table->string("address", 50);
+        Schema::table('transaction_document_templates', function (Blueprint $table) {
+            $table->text("description")->nullable()->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customer_emails', function (Blueprint $table) {
-            $table->dropColumn("address");
+        Schema::table('transaction_document_templates', function (Blueprint $table) {
+            $table->text("description")->change();
         });
     }
 };

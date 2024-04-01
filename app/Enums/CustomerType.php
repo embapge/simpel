@@ -25,11 +25,11 @@ enum CustomerType: string
     public static function array()
     {
         return collect([
-            ["id" => self::HOMEEQUIPMENT, "name" => "Home Equipment"],
-            ["id" => self::GARMENT, "name" => "Garment"],
-            ["id" => self::STATIONARY, "name" => "Stationary"],
-            ["id" => self::FOOD, "name" => "Food"],
-            ["id" => self::SHIPPING, "name" => "Shipping"],
+            ["id" => "homeEquipment", "name" => "Home Equipment"],
+            ["id" => "garment", "name" => "Garment"],
+            ["id" => "stationary", "name" => "Stationary"],
+            ["id" => "food", "name" => "Food"],
+            ["id" => "shipping", "name" => "Shipping"],
         ]);
     }
 

@@ -17,7 +17,7 @@ class CustomerPhoneFactory extends Factory
         $faker = Faker::create("id_ID");
         return [
             "number" => $faker->phoneNumber(),
-            "type" => $faker->randomElement(["primary", "secondary"]),
+            "name" => $faker->name()
         ];
     }
 }

@@ -19,9 +19,10 @@ class CustomerFactory extends Factory
         return [
             "name" => $faker->company(),
             "pic_name" => $faker->name(),
-            "group" => $faker->companySuffix(),
-            "type" => $faker->randomElement(["homeEquipment", "garment", "stationary", "food", "shipping"]),
-            "established" => $faker->dateTimeBetween(),
+            "address" => $faker->address(),
+            "email" => $faker->safeEmail(),
+            "verify_at" => $faker->dateTimeBetween(),
+            "phone_number" => $faker->phoneNumber(),
             "website" => $faker->url(),
         ];
     }

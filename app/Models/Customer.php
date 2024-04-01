@@ -14,7 +14,7 @@ class Customer extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "customers";
-    protected $fillable = ["name", "pic_name", "group", "type", "established", "website"];
+    protected $fillable = ["name", "email", "phone_number", "pic_name", "address", "website"];
 
     protected static function newFactory(): Factory
     {
@@ -29,5 +29,10 @@ class Customer extends Model
     public function phones()
     {
         return $this->hasMany(CustomerPhone::class, "customer_id", "id");
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, "customer_id", "id");
     }
 }

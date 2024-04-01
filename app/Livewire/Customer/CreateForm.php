@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Customer;
 
+use App\Enums\CustomerType;
 use App\Livewire\Forms\CustomerForm;
 use App\Models\Customer;
 use Livewire\Attributes\On;
@@ -51,17 +52,12 @@ class CreateForm extends Component
         $this->form->store();
         $this->form->resetCustom();
         $this->dispatch("customerRefreshTable");
-        $this->js(`$("#CustomerCreateModal").modal("hide")`);
+        $this->js("$('#CustomerCreateModal').modal('hide')");
         Toaster::success('Customer berhasil dibuat');
-    }
-
-    public function resetCustom()
-    {
-        $this->form->resetCustom();
     }
 
     public function render()
     {
-        return view('livewire.customer.create-form');
+        return view('livewire.customer.create-form', ["customers" => CustomerType::array()]);
     }
 }

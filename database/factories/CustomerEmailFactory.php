@@ -16,11 +16,9 @@ class CustomerEmailFactory extends Factory
     public function definition(): array
     {
         $faker = Faker::create("id_ID");
-        $date = $faker->dateTimeBetween();
         return [
             "address" => $faker->safeEmail(),
-            "type" => $faker->randomElement(["primary", "secondary"]),
-            "verify_at" => $faker->randomElement([$date, null])
+            "name" => $faker->name()
         ];
     }
 }

@@ -12,7 +12,7 @@ class CustomerPhone extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "customer_phones";
-    protected $fillable = ["customer_id", "number", "type"];
+    protected $fillable = ["customer_id", "number", "name"];
 
     public function customer()
     {

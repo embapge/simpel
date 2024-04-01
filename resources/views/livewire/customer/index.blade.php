@@ -1,13 +1,6 @@
 <div>
-    <div class="row g-2">
-        <div class="col mb-3">
-            <h3>Customer</h3>
-        </div>
-        {{-- <div class="col">
-            <livewire:customer.create />
-        </div> --}}
-    </div>
-    <div>
+    <div class="card p-3">
+        <h3 class="card-header">Customer List</h3>
         <livewire:customer-table /> 
     </div>
     <div class="">

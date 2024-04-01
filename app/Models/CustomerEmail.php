@@ -13,7 +13,7 @@ class CustomerEmail extends Model
 {
     use HasFactory, HasUuids, BlameableTrait;
     protected $table = "customer_emails";
-    protected $fillable = ["customer_id", "address", "type", "verify_at"];
+    protected $fillable = ["customer_id", "address", "name", "verify_at"];
 
     protected static function newFactory(): Factory
     {

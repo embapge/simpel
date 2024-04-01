@@ -8,6 +8,7 @@ class Index extends Component
 {
     public function render()
     {
+        session()->flash('flash.banner', 'Yay it works!');
         return view('livewire.customer.index');
     }
 }

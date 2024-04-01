@@ -21,6 +21,7 @@ use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
+use Illuminate\Support\Str;
 
 final class CustomerTable extends PowerGridComponent
 {
@@ -32,13 +33,13 @@ final class CustomerTable extends PowerGridComponent
             Button::add('destroy')
                 ->render(function () {
                     return Blade::render(<<<HTML
-                        <button wire:ignore.self wire:ignore type="button" wire:click="destroy" wire:confirm="Apakah anda yakin?" class="btn btn-icon btn-danger btn-xl"><i class='bx bx-trash bx-md'></i></button>
+                        <button wire:ignore.self wire:ignore type="button" wire:click="destroy" wire:confirm="Apakah anda yakin?" class="btn btn-icon btn-danger btn-md mt-2"><i class='bx bx-trash'></i></button>
                         HTML);
                 }),
             Button::add('create')
                 ->render(function () {
                     return Blade::render(<<<HTML
-                        <button wire:ignore.self wire:ignore type="button" class="btn btn-icon btn-primary btn-xl" data-bs-toggle="modal" data-bs-target="#CustomerCreateModal"><i class='bx bxs-plus-circle bx-md'></i></button>
+                        <button wire:ignore.self wire:ignore type="button" class="btn btn-icon btn-primary btn-md mt-2" data-bs-toggle="modal" data-bs-target="#CustomerCreateModal"><i class='bx bxs-plus-circle'></i></button>
                         HTML);
                 }),
             // Button::add('customer-modal')
@@ -76,14 +77,14 @@ final class CustomerTable extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
-            ->add('name')
-            ->add('pic_name')
-            ->add('group')
-            ->add('type')
-            ->add('established_formatted', fn (Customer $model) => Carbon::parse($model->established)->format('d F Y'))
+            ->add('name', fn (Customer $customer) => "<span class='badge badge-center rounded-pill bg-label-primary'>" . Str::upper($customer->name[0]) . "</span> {$customer->name}")
+            ->add('pic_name', fn (Customer $customer) => "<span class='badge badge-center rounded-pill bg-label-primary'>" . Str::upper($customer->pic_name[0]) . "</span> {$customer->pic_name}")
+            ->add("email")
+            ->add("phone_number")
+            ->add("address", fn (Customer $customer) => "<span class='text-wrap'>{$customer->address}</span>")
             ->add('website', fn (Customer $customer) => "<span class='text-wrap'>{$customer->website}</span>")
-            ->add('emails', fn (Customer $customer) => $customer->emails->map(fn ($email) => $email->address)->join("<br>"))
-            ->add('phones', fn (Customer $customer) => $customer->phones->map(fn ($phone) => $phone->number)->join("<br>"))
+            ->add('emails', fn (Customer $customer)  => $customer->emails->sortBy("type")->map(fn ($email) => $email->address)->join("<br>"))
+            ->add('phones', fn (Customer $customer) => $customer->phones->sortBy("type")->map(fn ($phone) => $phone->number)->join("<br>"))
             ->add('created_at_formatted', fn (Customer $customer) => Carbon::parse($customer->created_at)->translatedFormat("d F Y"))
             ->add('updated_at_formatted', fn (Customer $customer) => Carbon::parse($customer->updated_at)->translatedFormat("d F Y"));
     }
@@ -99,23 +100,25 @@ final class CustomerTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Group', 'group')
+            Column::make('Email', 'email')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Type', 'type')
+            Column::make('Nomor Telepon', 'phone_number')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Established', 'established_formatted', 'established')
-                ->sortable()->searchable(),
+            Column::make('Address', 'address')
+                ->sortable()
+                ->searchable(),
+
+            Column::add()->title("Kontak Email")->field("emails", "customer_emails.address")->searchable(),
+
+            Column::add()->title("Kontak Telepon")->field("phones", "customer_phones.number")->searchable(),
 
             Column::make('Website', 'website')
                 ->sortable()
                 ->searchable(),
-
-            Column::add()->title("Emails")->field("emails", "customer_emails.address")->searchable(),
-            Column::add()->title("Phones")->field("phones", "customer_phones.number")->searchable(),
 
             Column::make('Created at', 'created_at_formatted', 'created_at')
                 ->sortable(),
@@ -134,13 +137,16 @@ final class CustomerTable extends PowerGridComponent
             Filter::inputText('name', 'name'),
             Filter::inputText('pic_name', 'pic_name')
                 ->operators(['contains']),
-            Filter::inputText('group', 'group')
+            // Filter::multiSelect('type', 'type')
+            //     ->dataSource(CustomerType::array())
+            //     ->optionValue('id')
+            //     ->optionLabel('name'),
+            Filter::inputText('email', 'email')
                 ->operators(['contains']),
-            Filter::multiSelect('type', 'type')
-                ->dataSource(CustomerType::array())
-                ->optionValue('id')
-                ->optionLabel('name'),
-            Filter::datepicker('established', 'established'),
+            Filter::inputText('phone_number', 'phone_number')
+                ->operators(['contains']),
+            Filter::inputText('address', 'address')
+                ->operators(['contains']),
             Filter::inputText('website', 'website')
                 ->operators(['contains']),
             Filter::inputText('customer_emails.address', 'emails')
@@ -149,7 +155,7 @@ final class CustomerTable extends PowerGridComponent
                         $q->where("address", "like", "%{$keywords['value']}%");
                     });
                 }),
-            Filter::inputText('customer_phones.number', 'emails')
+            Filter::inputText('customer_phones.number', 'phones')
                 ->operators(['contains'])->builder(function (Builder $q, mixed $keywords) {
                     $q->whereHas("phones", function ($q) use ($keywords) {
                         $q->where("number", "like", "%{$keywords['value']}%");
@@ -169,18 +175,18 @@ final class CustomerTable extends PowerGridComponent
     public function actions(Customer $row): array
     {
         return [
-            // Button::add('custom')
-            //     ->render(function () use ($row) {
-            //         return Blade::render(<<<HTML
-            //             <div>
-            //                 <button type="button" class="badge badge-center bg-warning rounded-pill" wire:click="show('$row->id')"><span class="tf-icons bx bx-pencil"></span></button>
-            //             </div>
-            //             HTML);
-            //     }),
-            Button::add('edit')
-                ->slot('<span class="tf-icons bx bx-pencil"></span>')
-                ->class('badge badge-center bg-warning rounded-pill')
-                ->dispatch('customer-show', ['customer' => $row->id]),
+            Button::add('custom')
+                ->render(function () use ($row) {
+                    return Blade::render(<<<HTML
+                        <div wire:key="$row->id" wire:ignore>
+                            <button type="button" class="badge badge-center bg-warning rounded-pill" wire:click="show('$row->id')"><span class="tf-icons bx bx-pencil"></span></button>
+                        </div>
+                        HTML);
+                }),
+            // Button::add('edit')
+            //     ->slot('<span class="tf-icons bx bx-pencil"></span>')
+            //     ->class('badge badge-center bg-warning rounded-pill')
+            //     ->dispatch('customer-show', ['customer' => $row->id]),
         ];
     }
 
@@ -213,6 +219,7 @@ final class CustomerTable extends PowerGridComponent
             }
         }
 
+        $this->dispatch('customerResetForm');
         $this->dispatch('$refresh');
         Toaster::success("Data berhasil di hapus \n {$errorMessage}");
     }

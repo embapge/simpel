@@ -1,12 +1,12 @@
 <?php
 
-namespace App\View\Components;
+namespace App\View\Components\Document;
 
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class datepicker extends Component
+class Index extends Component
 {
     /**
      * Create a new component instance.
@@ -21,6 +21,6 @@ class datepicker extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.datepicker');
+        return view('components.document.index');
     }
 }

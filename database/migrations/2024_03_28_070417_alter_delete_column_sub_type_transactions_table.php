@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('customer_emails', function (Blueprint $table) {
-            $table->dropColumn("deleted_at");
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->dropColumn("sub_type");
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('customer_emails', function (Blueprint $table) {
-            $table->softDeletes();
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->enum("sub_type", ["kk", "ppmkk", "ppkk", "kp", "rbsgmk"]);
         });
     }
 };
