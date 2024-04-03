@@ -15,7 +15,7 @@ class UpdateForm extends Component
 
     public function mount()
     {
-        $this->form->resetCustom();
+        $this->form->mount();
     }
 
     public function addEmail()

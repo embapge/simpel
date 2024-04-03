@@ -10,7 +10,7 @@ enum TransactionStatus: string
     case LESSPAID = "lesspaid";
     case CANCEL = "cancel";
 
-    public function labels()
+    public function labels(): string
     {
         return match ($this) {
             self::DRAFT => "Draft",
@@ -24,11 +24,11 @@ enum TransactionStatus: string
     public static function array()
     {
         return collect([
-            "id" => "draft", "name" => "Draft",
-            "id" => "unpaid", "name" => "Unpaid",
-            "id" => "paid", "name" => "Paid",
-            "id" => "lesspaid", "name" => "Lesspaid",
-            "id" => "cancel", "name" => "Cancel",
+            ["id" => "draft", "name" => "❔Draft"],
+            ["id" => "unpaid", "name" => "❌Unpaid"],
+            ["id" => "paid", "name" => "🤑Paid"],
+            ["id" => "lesspaid", "name" => "❕Lesspaid"],
+            ["id" => "cancel", "name" => "🗑️Cancel"],
         ]);
     }
 

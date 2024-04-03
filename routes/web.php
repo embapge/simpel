@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Transaction\Detail;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,7 +24,11 @@ Route::middleware([
         return view("document.index");
     })->name("document");
 
-    Route::get("/transaction", function () {
-        return view("transaction.index");
-    })->name("transaction");
+    Route::prefix('transaction')->group(function () {
+        Route::get("/", function () {
+            return view("transaction.index");
+        })->name("transaction");
+
+        Route::get("/{transaction}/detail", Detail::class)->name("transaction.detail");
+    });
 });

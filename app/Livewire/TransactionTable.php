@@ -2,6 +2,9 @@
 
 namespace App\Livewire;
 
+use App\Enums\CustomerType;
+use App\Enums\TransactionStatus;
+use App\Models\Customer;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,6 +19,8 @@ use PowerComponents\LivewirePowerGrid\PowerGrid;
 use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
+use Illuminate\Support\Str;
+use NumberFormatter;
 
 final class TransactionTable extends PowerGridComponent
 {
@@ -54,42 +59,42 @@ final class TransactionTable extends PowerGridComponent
         ];
     }
 
-    public function datasource(): Builder
+    public function datasource(): ?Builder
     {
-        return Transaction::with(["subTypes"])->select("transactions.*");
+        return Transaction::query()->join("customers", fn ($customer) => $customer->on("transactions.customer_id", "=", "customers.id"))->select(["transactions.*", "customers.name as customer_name"]);
     }
 
     public function relationSearch(): array
     {
-        return ["subTypes" => ["name", "description"]];
+        return [
+            "customer" => ["name"]
+        ];
     }
 
     public function fields(): PowerGridFields
     {
+        $idr = new NumberFormatter('id_ID', NumberFormatter::CURRENCY);
         return PowerGrid::fields()
-            ->add('id')
-            ->add('customer_id')
-            ->add('number_display')
-            ->add('total_bill')
-            ->add('total')
-            ->add('total_payment')
-            ->add('excess_payment')
+            ->add('customers.name')
+            ->add('customer_name', fn (Transaction $transaction) => Str::title($transaction->customer->name))
+            ->add('number_display', fn (Transaction $transaction) => "<a href='" . route("transaction.detail", ["transaction" => $transaction->id]) . "'>{$transaction->number_display}</a>")
+            ->add('total_bill', fn (Transaction $transaction) => $idr->formatCurrency($transaction->total_bill, "IDR"))
+            ->add('total', fn (Transaction $transaction) => $idr->formatCurrency($transaction->total, "IDR"))
+            ->add('total_payment', fn (Transaction $transaction) => $idr->formatCurrency($transaction->total_payment, "IDR"))
+            ->add('excess_payment', fn (Transaction $transaction) => $idr->formatCurrency($transaction->excess_payment, "IDR"))
             ->add('status')
-            ->add('created_at');
+            ->add('created_at_formatted', fn (Transaction $transaction) => Carbon::parse($transaction->created_at)->translatedFormat("d F Y"))
+            ->add('updated_at_formatted', fn (Transaction $transaction) => Carbon::parse($transaction->updated_at)->translatedFormat("d F Y"));
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Customer id', 'customer_id')
-                ->sortable()
-                ->searchable(),
-
             Column::make('Number display', 'number_display')
+                ->sortable()
+                ->searchable(),
+
+            Column::make('Customer', 'customer_name', 'customers.name')
                 ->sortable()
                 ->searchable(),
 
@@ -116,7 +121,7 @@ final class TransactionTable extends PowerGridComponent
             Column::make('Created at', 'created_at_formatted', 'created_at')
                 ->sortable(),
 
-            Column::make('Created at', 'created_at')
+            Column::make('Updated at', 'updated_at_formatted', 'updated_at')
                 ->sortable()
                 ->searchable(),
 
@@ -126,7 +131,30 @@ final class TransactionTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::inputText('number_display', 'number_display')
+                ->operators(['contains']),
+            Filter::inputText('customer_name', 'customers.name')
+                ->operators(['contains']),
+            Filter::number('total_bill', 'total_bill')
+                ->thousands('.')
+                ->decimal(','),
+            Filter::number('total', 'total')
+                ->thousands('.')
+                ->decimal(','),
+            Filter::number('total_payment', 'total_payment')
+                ->thousands('.')
+                ->decimal(','),
+            Filter::number('excess_payment', 'excess_payment')
+                ->thousands('.')
+                ->decimal(','),
+            Filter::multiSelect('status', 'status')
+                ->dataSource(TransactionStatus::array())
+                ->optionValue('id')
+                ->optionLabel('name'),
+            Filter::datepicker('created_at', 'created_at'),
+            Filter::datepicker('updated_at', 'updated_at'),
+        ];
     }
 
     #[\Livewire\Attributes\On('edit')]

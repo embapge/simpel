@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('transaction_sub_types', function (Blueprint $table) {
             $table->uuid("id");
             $table->foreignUuid("transaction_id")->constrained("transaction_types", "id")->cascadeOnUpdate()->restrictOnDelete();
-            $table->string("name", 50);
+            $table->text("name");
             $table->text("description")->nullable();
             $table->timestamps();
             $table->primary("id");

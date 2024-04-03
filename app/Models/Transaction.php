@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\NumberDisplayCast;
 use App\Casts\StatusCast;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -21,7 +22,8 @@ class Transaction extends Model
     protected function casts()
     {
         return [
-            "status" => StatusCast::class
+            "status" => StatusCast::class,
+            "number_display" => NumberDisplayCast::class,
         ];
     }
 
@@ -30,9 +32,9 @@ class Transaction extends Model
         return TransactionFactory::new();
     }
 
-    public function subTypes()
+    public function subType()
     {
-        return $this->hasMany(TransactionSubType::class, "transaction_type_id", "id");
+        return $this->belongsTo(TransactionSubType::class, "transaction_sub_type_id", "id");
     }
 
     public function customer()

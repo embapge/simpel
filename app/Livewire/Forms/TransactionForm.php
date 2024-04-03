@@ -15,9 +15,12 @@ use Livewire\Form;
 class TransactionForm extends Form
 {
     public Transaction $transaction;
+    public TransactionServiceForm $service;
     public $customer_id;
     public $documents;
+    public $services;
     public $transaction_sub_type_id;
+    public $transactionSubType;
     public $number_display;
     public $total_bill;
     public $total;
@@ -48,6 +51,14 @@ class TransactionForm extends Form
         $this->resetCustom();
     }
 
+    public function setTransaction(Transaction $transaction)
+    {
+        $this->transaction = $transaction->load(["customer", "subType", "documents", "services"]);
+        $this->fill([
+            "number_display" => $this->transaction->number_display
+        ]);
+    }
+
     public function store()
     {
         $this->validate();
@@ -60,5 +71,6 @@ class TransactionForm extends Form
         $this->reset(["transaction_sub_type_id", "number_display", "total_bill", "total", "total_payment", "excess_payment", "status", "documents"]);
         $this->documents = [];
         $this->customer_id = "";
+        $this->services = collect([]);
     }
 }

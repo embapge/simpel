@@ -12,9 +12,9 @@
                         <div class="col-xl-4 mb-3">
                             <label class="form-label" for="customer">Pelanggan <span
                                     class="text-danger">*</span></label>
-                            <div class="" wire:ignore>
+                            <div class="">
                                 <x-select2 class="form-select mb-1" :datas='$customers' wire:model='form.customer_id'
-                                    wire:click='changeCustomer' name="form.customer_id" />
+                                    wire:click='changeCustomer' name="form.customer_id" id="customerId" />
                                 <x-alert-message name="form.customer_id" />
                             </div>
                         </div>
@@ -117,157 +117,7 @@
                                                                         <input class="form-check-input me-1"
                                                                             type="checkbox"
                                                                             value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
-                                                                        {{ Str::title($document->name) }}
-                                                                    </label>
-                                                                </div>
-                                                                <div class="col-xl-6 col-lg-4 col-md-6">
-                                                                    <label
-                                                                        class="list-group-item border-0 text-wrap text-break">
-                                                                        <input class="form-check-input me-1"
-                                                                            type="checkbox"
-                                                                            value="{{ $document->id }}"
-                                                                            wire:model='form.documents'>
+                                                                            wire:model='form.documents' checked>
                                                                         {{ Str::title($document->name) }}
                                                                     </label>
                                                                 </div>

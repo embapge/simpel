@@ -23,11 +23,35 @@ class CustomerForm extends Form
     public $phones;
     public Customer $customer;
 
-    public function mount()
+    public function __construct()
     {
-        $this->resetCustom();
+        $this->fill([
+            "name" => "",
+            "email" => "",
+            "phone_number" => "",
+            "pic_name" => "",
+            "address" => "",
+            "website" => "",
+            "emails" => collect([["id" => "", "address" => "", "name" => ""]]),
+            "phones" => collect([["id" => "", "number" => "", "name" => ""]]),
+        ]);
+        $this->customer = new Customer();
     }
 
+    public function mount()
+    {
+        $this->fill([
+            "name" => "",
+            "email" => "",
+            "phone_number" => "",
+            "pic_name" => "",
+            "address" => "",
+            "website" => "",
+            "emails" => collect([["id" => "", "address" => "", "name" => ""]]),
+            "phones" => collect([["id" => "", "number" => "", "name" => ""]]),
+        ]);
+        $this->customer = new Customer();
+    }
 
     public function rules()
     {
@@ -73,8 +97,6 @@ class CustomerForm extends Form
 
     public function setCustomer(Customer $customer)
     {
-        $this->resetCustom();
-
         $this->fill([
             "name" => $customer->name,
             "email" => $customer->email,

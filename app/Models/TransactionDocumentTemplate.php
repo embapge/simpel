@@ -16,11 +16,11 @@ class TransactionDocumentTemplate extends Model
 
     public function documents()
     {
-        return $this->belongsToMany(Document::class, "transaction_document_template_details", "transaction_document_template_id", "document_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id"])->using(TransactionDocumentTemplateDetail::class);
+        return $this->belongsToMany(Document::class, "transaction_document_template_details", "transaction_document_template_id", "document_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id", "is_required"])->using(TransactionDocumentTemplateDetail::class);
     }
 
     public function subTypes()
     {
-        return $this->belongsToMany(TransactionSubType::class, "transaction_document_template_details", "transaction_document_template_id", "transaction_sub_type_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id"])->using(TransactionDocumentTemplateDetail::class);
+        return $this->belongsToMany(TransactionSubType::class, "transaction_document_template_details", "transaction_document_template_id", "transaction_sub_type_id")->withPivot(["transaction_document_template_id", "transaction_sub_type_id", "document_id", "is_required"])->using(TransactionDocumentTemplateDetail::class);
     }
 }
