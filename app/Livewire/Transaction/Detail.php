@@ -9,16 +9,18 @@ use App\Models\Transaction;
 use App\Models\TransactionService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use App\Livewire\Transaction\Detail as DetailInitialize;
+use Illuminate\Support\Arr;
+use Masmerise\Toaster\Toaster;
 
 #[Layout('components.layout')]
 class Detail extends Component
 {
     public Transaction $transaction;
     public TransactionForm $form;
-    public TransactionServiceForm $transactionServices;
     public CustomerForm $customer;
-    public $transactionServicesWrapper = [];
-    public $number_display = "23123231";
+    public $transactionServices = [];
+    public $number_display = "";
     public $parentCheckbox = false;
     public $services;
     public $checkedServices = [];
@@ -28,19 +30,19 @@ class Detail extends Component
     {
         $this->form->setTransaction($transaction);
         $this->customer->setCustomer($transaction->customer);
-        $this->transactionServicesWrapper = $transaction->services->map(fn ($service, $idx) => $this->transactionServices->setService($service));
-        $this->services = collect();
-        // $this->services = collect([["id" => "", "name" => "Bacott", "description" => "wayaw", "price" => 600000], ["id" => "u3204123204832", "name" => "Bacot123", "description" => "wayaw", "price" => 600000]]);
+        $this->transactionServices = $transaction->services->isNotEmpty() ? $transaction->services->map(fn ($service, $idx) => (new TransactionServiceForm($this, "transactionService"))->setService($service)) : collect([]);
+        $this->form->calculate();
+        // $this->transactionServices = collect([]);
     }
 
     public function addService()
     {
-        $this->services->push(["name" => "", "description" => "", "price" => 0]);
+        $this->transactionServices->push((new TransactionServiceForm($this, "transactionService")));
     }
 
-    public function removeService($id)
+    public function removeService($idx)
     {
-        $this->services->pull($id);
+        $this->transactionServices->pull($idx);
     }
 
     public function modeEdit()
@@ -51,7 +53,7 @@ class Detail extends Component
     public function checkboxParent()
     {
         if ($this->parentCheckbox) {
-            $this->checkedServices = $this->form->services->pluck("id");
+            $this->checkedServices = Arr::pluck($this->transactionServices, "id");
         } else {
             $this->checkedServices = [];
         }
@@ -72,9 +74,9 @@ class Detail extends Component
         $this->js("$('#parentCheck').prop('indeterminate', false)");
         $this->js("$('#parentCheck').prop('checked', false)");
 
-        if (count($this->checkedServices) > 0 && count($this->checkedServices) < count($this->services)) {
+        if (count($this->checkedServices) > 0 && count($this->checkedServices) < count($this->transactionServices)) {
             $this->js("$('#parentCheck').prop('indeterminate', true)");
-        } else if (count($this->checkedServices) == count($this->services)) {
+        } else if (count($this->checkedServices) == count($this->transactionServices)) {
             $this->js("$('#parentCheck').prop('checked', true)");
         } else {
             $this->js("$('#parentCheck').prop('checked', false)");
@@ -83,14 +85,29 @@ class Detail extends Component
 
     public function save()
     {
-        foreach ($this->services as $service) {
-            TransactionService::create([
-                "transaction_id" => "9bb426c1-e74e-4556-a598-68e61bd0348b",
-                "name" => $service["name"],
-                "description" => $service["description"],
-                "price" => $service["price"],
-            ]);
+        foreach ($this->transactionServices as $service) {
+            if (!$service->id) {
+                $service->store($this->transaction);
+            } else {
+                $service->patch();
+            }
         }
-        $this->services = [];
+
+        $this->form->calculate();
+        $this->reset("editMode");
+        $this->mount($this->transaction);
+        Toaster::success("Data berhasil diubah");
+    }
+
+    public function destroyService($id)
+    {
+        try {
+            $this->transactionServices->where("id", $id)->first()->destroy();
+            $this->transactionServices = $this->transactionServices->whereNotNull("id");
+            $this->form->calculate();
+            Toaster::success("Data layanan berhasil dihapus");
+        } catch (\Throwable $th) {
+            Toaster::error("Data layanan tidak ditemukan");
+        }
     }
 }

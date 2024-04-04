@@ -56,3 +56,7 @@
 .demo-inline-spacing > * {
     margin: 0px !important;
 }
+
+.table-p-2 td {
+    padding: 2px !important;
+}

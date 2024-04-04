@@ -14,26 +14,27 @@ use Livewire\Form;
 
 class TransactionForm extends Form
 {
+    public $id = "";
+    public $customer_id = "";
+    public $documents_id = [];
+    public $services_id = [];
+    public $histories_id = [];
+    public $transaction_sub_type_id = "";
+    public $number_display = "";
+    public $total_bill = "";
+    public $total = "";
+    public $total_payment = "";
+    public $excess_payment = "";
+    public $status = "";
+    public $internal_note = "";
     public Transaction $transaction;
-    public TransactionServiceForm $service;
-    public $customer_id;
-    public $documents;
-    public $services;
-    public $transaction_sub_type_id;
-    public $transactionSubType;
-    public $number_display;
-    public $total_bill;
-    public $total;
-    public $total_payment;
-    public $excess_payment;
-    public $status;
 
     public function rules()
     {
         return [
             'customer_id' => "required",
             'transaction_sub_type_id' => "required",
-            'documents' => ["array", "required"],
+            'document_id' => ["array", "required"],
         ];
     }
 
@@ -42,20 +43,31 @@ class TransactionForm extends Form
         return [
             'customer_id.required' => 'Pelanggan harus diisi.',
             'transaction_sub_type_id.required' => 'Jenis transaksi harus diisi.',
-            'documents.required' => 'Dokumen harus diisi.',
+            'document_id.required' => 'Dokumen harus diisi.',
         ];
     }
 
     public function mount()
     {
-        $this->resetCustom();
+        // $this->resetCustom();
     }
 
     public function setTransaction(Transaction $transaction)
     {
-        $this->transaction = $transaction->load(["customer", "subType", "documents", "services"]);
+        $transaction->load(["documents", "services", "histories"]);
+        $this->transaction = $transaction;
         $this->fill([
-            "number_display" => $this->transaction->number_display
+            "id" => $transaction->id,
+            "customer_id" => $transaction->customer_id,
+            "documents_id" => $transaction->documents->pluck("id"),
+            "services_id" => $transaction->services->pluck("id"),
+            "histories_id" => $transaction->histories->pluck("id"),
+            "number_display" => $transaction->number_display,
+            "total_bill" => $transaction->total_bill,
+            "total" => $transaction->total,
+            "total_payment" => $transaction->total_payment,
+            "excess_payment" => $transaction->excess_payment,
+            "status" => $transaction->status,
         ]);
     }
 
@@ -63,14 +75,18 @@ class TransactionForm extends Form
     {
         $this->validate();
         $transaction = Transaction::create($this->only("customer_id", "transaction_sub_type_id"));
-        $transaction->documents()->attach($this->documents);
+        $transaction->documents()->attach($this->documents_id);
+        $this->reset();
+    }
+
+    public function calculate()
+    {
+        $this->transaction->calculate();
+        $this->total = $this->transaction->total;
     }
 
     public function resetCustom()
     {
-        $this->reset(["transaction_sub_type_id", "number_display", "total_bill", "total", "total_payment", "excess_payment", "status", "documents"]);
-        $this->documents = [];
-        $this->customer_id = "";
-        $this->services = collect([]);
+        $this->reset();
     }
 }

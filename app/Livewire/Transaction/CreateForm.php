@@ -17,17 +17,13 @@ class CreateForm extends Component
 {
     public TransactionForm $form;
     public CustomerForm $customer;
-    public $transactionType;
-    public $transactionDocumentTemplate;
-    public $customer_id;
+    public $transactionType = [];
+    public $transactionDocumentTemplate = [];
 
     public function mount()
     {
-        $this->form->mount();
-        $this->customer->mount();
-        $this->transactionType = TransactionType::with(["subTypes"])->get();
-        $this->transactionDocumentTemplate = collect([]);
-        $this->customer_id = "";
+        $this->transactionType = TransactionType::with(["subTypes"])->get()->toArray();
+        $this->transactionDocumentTemplate = [];
     }
 
     public function changeDocument()
@@ -35,21 +31,21 @@ class CreateForm extends Component
         $documentTemplates = TransactionDocumentTemplate::withWhereHas("subTypes", function ($q) {
             $q->where("transaction_document_template_details.transaction_sub_type_id", $this->form->transaction_sub_type_id);
         })->with(["documents"])->get();
-        $this->form->documents = $documentTemplates->pluck("documents")->collapse()->where("pivot.is_required", 1)->pluck("id")->toArray();
-        $this->transactionDocumentTemplate = $documentTemplates;
+        $this->form->documents_id = $documentTemplates->pluck("documents")->collapse()->where("pivot.is_required", 1)->pluck("id")->toArray();
+        $this->transactionDocumentTemplate = $documentTemplates->toArray();
     }
 
     #[On('transaction-customer-change')]
     public function changeCustomer()
     {
-        $this->customer->resetCustom();
+        $this->customer = new CustomerForm($this, "customer");
         $this->form->customer_id ? $this->customer->setCustomer(Customer::where("id", $this->form->customer_id)->first()) : "";
     }
 
     public function save()
     {
-        // $this->form->store();
-        $this->mount();
+        $this->form->store();
+        $this->customer->resetCustom();
         $this->dispatch("transactionRefreshTable");
         $this->js("$('select#customerId').val('').trigger('change')    ;$('#TransactionCreateModal').modal('hide')");
         Toaster::success('Transaksi berhasil dibuat');

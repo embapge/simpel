@@ -61,4 +61,12 @@ class Transaction extends Model
     {
         return $this->hasOne(TransactionHistory::class, "transaction_id", "id")->latest()->first();
     }
+
+    public function calculate()
+    {
+        $this->refresh();
+        $this->update([
+            "total" => $this->services->sum("price")
+        ]);
+    }
 }

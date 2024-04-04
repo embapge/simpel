@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Transaction;
 use App\Models\TransactionService;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -13,9 +14,20 @@ class TransactionServiceForm extends Form
     public $price;
     public $description;
 
-    public function mount()
+    public function rules()
     {
-        $this->resetCustom();
+        return [
+            'name' => "required",
+            'price' => "required",
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Nama harus diisi.',
+            'price.required' => 'Harga harus diisi.',
+        ];
     }
 
     public function setService(TransactionService $service)
@@ -30,13 +42,19 @@ class TransactionServiceForm extends Form
         return $this;
     }
 
-    public function resetCustom()
+    public function patch()
     {
-        $this->fill([
-            "id" => "",
-            "name" => "",
-            "price" => "",
-            "description" => "",
-        ]);
+        TransactionService::find($this->id)->update($this->only("name", "description", "price"));
+    }
+
+    public function store(Transaction $transaction)
+    {
+        $transaction->services()->create($this->only("name", "price", "description"));
+    }
+
+    public function destroy()
+    {
+        TransactionService::find($this->id)->delete();
+        $this->reset();
     }
 }
