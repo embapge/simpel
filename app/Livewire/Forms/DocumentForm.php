@@ -7,13 +7,14 @@ use Livewire\Attributes\Validate;
 use Livewire\Form;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Storage;
 
 class DocumentForm extends Form
 {
-    public Document $document;
-    public $name;
-    public $is_active;
-    public $description;
+    public $id = "";
+    public $name = "";
+    public $is_active = 0;
+    public $description = "";
 
     public function mount()
     {
@@ -23,7 +24,7 @@ class DocumentForm extends Form
     public function rules()
     {
         return [
-            "name" => ["required", Rule::unique('customers')->where(fn (Builder $query) => $query->whereNot('id', $this->document->id)->whereNot("name", $this->document->name))],
+            "name" => ["required", Rule::unique('documents')],
             "is_active" => ["required"],
         ];
     }
@@ -37,20 +38,21 @@ class DocumentForm extends Form
         ];
     }
 
+    public function setDocument(Document $document)
+    {
+        $this->fill($document->only("id", "name", "is_active", "description"));
+        return $this;
+    }
+
     public function resetCustom()
     {
-        $this->fill([
-            "name" => "",
-            "is_active" => 0,
-            "description" => "",
-            "document" => new Document()
-        ]);
+        $this->reset();
     }
 
     public function store()
     {
         $this->validate();
-        Document::create($this->except("document"));
+        Document::create($this->all());
     }
 
     public function patch()

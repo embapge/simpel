@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\UangCast;
 use Database\Factories\TransactionServiceFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,13 @@ class TransactionService extends Model
     protected static function newFactory(): Factory
     {
         return TransactionServiceFactory::new();
+    }
+
+    protected function casts()
+    {
+        return [
+            "price" => UangCast::class,
+        ];
     }
 
     public function transaction()

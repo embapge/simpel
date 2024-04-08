@@ -117,7 +117,7 @@
                                                                         <input class="form-check-input me-1"
                                                                             type="checkbox"
                                                                             value="{{ $document['id'] }}"
-                                                                            wire:model='form.documents_id' checked>
+                                                                            wire:model='documents'>
                                                                         {{ Str::title($document['name']) }}
                                                                     </label>
                                                                 </div>
@@ -127,7 +127,7 @@
                                                 </div>
                                             </div>
                                         @endforeach
-                                        <x-alert-message name="form.documents" />
+                                        <x-alert-message name="documents" />
                                     </div>
                                 </div>
                             @endif

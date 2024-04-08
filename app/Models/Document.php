@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\TitleCast;
 use Database\Factories\DocumentFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -19,6 +20,13 @@ class Document extends Model
     protected static function newFactory(): Factory
     {
         return DocumentFactory::new();
+    }
+
+    protected function casts()
+    {
+        return [
+            "name" => TitleCast::class,
+        ];
     }
 
     public function transactionTemplates()

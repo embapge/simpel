@@ -9519,6 +9519,10 @@ button.list-group-item-gray.active {
     width: 100px !important;
 }
 
+.w-px-125 {
+    width: 125px !important;
+}
+
 .w-px-150 {
     width: 150px !important;
 }

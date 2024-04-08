@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\DocumentController;
 use App\Livewire\Transaction\Detail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,5 +33,13 @@ Route::middleware([
         })->name("transaction");
 
         Route::get("/{transaction}/detail", Detail::class)->name("transaction.detail");
+    });
+
+    Route::controller(DocumentController::class)->group(function () {
+        Route::prefix("document")->group(function () {
+            Route::name("document.")->group(function () {
+                Route::post("preview", "stream")->name("preview");
+            });
+        });
     });
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\TitleCast;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,6 +13,13 @@ class TransactionSubType extends Model
     use HasFactory, HasUuids, BlameableTrait;
     protected $table = "transaction_sub_types";
     protected $fillable = ["transaction_id", "name", "description"];
+
+    protected function casts()
+    {
+        return [
+            "name" => TitleCast::class,
+        ];
+    }
 
     public function transactionType()
     {

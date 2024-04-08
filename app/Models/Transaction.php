@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\NumberDisplayCast;
 use App\Casts\StatusCast;
+use App\Casts\UangCast;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +18,7 @@ class Transaction extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "transactions";
-    protected $fillable = ["customer_id", "number_display", "type", "transaction_sub_type_id", "subtotal", "total_bill", "total", "tax", "stamp", "total_payment", "excess_payment", "status"];
+    protected $fillable = ["customer_id", "number_display", "type", "transaction_sub_type_id", "total_bill", "total", "total_payment", "excess_payment", "status", "internal_note"];
 
     protected function casts()
     {
@@ -45,6 +46,11 @@ class Transaction extends Model
     public function services()
     {
         return $this->hasMany(TransactionService::class, "transaction_id", "id");
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, "transaction_id", "id");
     }
 
     public function documents()

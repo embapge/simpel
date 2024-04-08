@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Livewire\Forms\DocumentForm;
 use App\Models\Document;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -129,22 +130,20 @@ final class DocumentTable extends PowerGridComponent
                 $field => $value
             ]);
         } catch (\Throwable $th) {
-            $updated = false;
-        }
-
-        if ($updated) {
-            $this->fillData();
-            Toaster::success("Dokumen berhasil di update");
+            // $updated = false;
+            Toaster::error("Terjadi kesalahan saat update dokumen");
             return;
         }
 
-        Toaster::error("Terjadi kesalahan saat update dokumen");
+        $this->fillData();
+        Toaster::success("Dokumen berhasil di update");
+        return;
     }
 
     public function onUpdatedEditable($id, $field, $value): void
     {
         try {
-            if (!$field == "name") {
+            if ($field != "name") {
                 $updated = Document::find($id)->update([
                     $field => $value
                 ]);

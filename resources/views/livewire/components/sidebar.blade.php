@@ -1,7 +1,7 @@
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
     <div class="app-brand demo">
-      <a href="index.html" class="app-brand-link">
-        {{-- <span class="app-brand-logo demo">
+        <a href="index.html" class="app-brand-link">
+            {{-- <span class="app-brand-logo demo">
           <svg
             width="25"
             viewBox="0 0 25 42"
@@ -56,45 +56,46 @@
             </g>
           </svg>
         </span> --}}
-        <img src="{{ Vite::asset("resources/images/logo/Logo-Sinar-Laut-Maritim.png") }}" alt="" width="35%">
-        <span class="app-brand-text demo menu-text fw-bolder m-0 p-0">Sinar Lautan <br> Maritim</span>
-      </a>
+            <img src="{{ Vite::asset('resources/images/logo/Logo-Sinar-Laut-Maritim.png') }}" alt=""
+                width="35%">
+            <span class="app-brand-text demo menu-text fw-bolder m-0 p-0">Sinar Lautan <br> Maritim</span>
+        </a>
 
-      <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
-        <i class="bx bx-chevron-left bx-sm align-middle"></i>
-      </a>
+        <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
+            <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
     </div>
 
     <div class="menu-inner-shadow"></div>
 
     <ul class="menu-inner py-1">
-      {{-- Master --}}
-      <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Master</span>
-      </li>
-      <li class="menu-item {{ request()->is("customer*") ? "active" : "" }}">
-        <a href="{{ route("customer") }}" class="menu-link">
-          <i class="menu-icon tf-icons bx bxs-user-account"></i>
-          <div data-i18n="Analytics">Customer</div>
-        </a>
-      </li>
-      <li class="menu-item {{ request()->is("document*") ? "active" : "" }}">
-        <a href="{{ route("document") }}" class="menu-link">
-          <i class="menu-icon tf-icons bx bx-box"></i>
-          <div data-i18n="Analytics">Document</div>
-        </a>
-      </li>
-      <li class="menu-header small text-uppercase">
-        <span class="menu-header-text">Main</span>
-      </li>
-      <li class="menu-item {{ request()->is("transaction/*") ? "active" : "" }}">
-        <a href="{{ route("transaction") }}" class="menu-link">
-          <i class="menu-icon tf-icons bx bxs-ship"></i>
-          <div data-i18n="Analytics">Transaction</div>
-        </a>
-      </li>
-      <!-- Dashboard -->
-      {{-- <li class="menu-item {{ request()->is("/") ? "active" : "" }}">
+        {{-- Master --}}
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Master</span>
+        </li>
+        <li class="menu-item {{ request()->is('customer*') ? 'active' : '' }}">
+            <a href="{{ route('customer') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-user-account"></i>
+                <div data-i18n="Analytics">Customer</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->is('document*') ? 'active' : '' }}">
+            <a href="{{ route('document') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-box"></i>
+                <div data-i18n="Analytics">Document</div>
+            </a>
+        </li>
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Main</span>
+        </li>
+        <li class="menu-item {{ request()->is('transaction*') ? 'active' : '' }}">
+            <a href="{{ route('transaction') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bxs-ship"></i>
+                <div data-i18n="Analytics">Transaction</div>
+            </a>
+        </li>
+        <!-- Dashboard -->
+        {{-- <li class="menu-item {{ request()->is("/") ? "active" : "" }}">
         <a href="index.html" class="menu-link">
           <i class="menu-icon tf-icons bx bx-home-circle"></i>
           <div data-i18n="Analytics">Dashboard</div>
@@ -414,4 +415,4 @@
         </a>
       </li> --}}
     </ul>
-  </aside>
+</aside>

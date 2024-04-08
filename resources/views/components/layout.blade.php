@@ -175,15 +175,30 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
     <!-- / Layout wrapper -->
-
+    <div class="bottom-fixed mb-0">
+        <div class="btn-group mb-0">
+            <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                Info
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>
+                <li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="javascript:void(0);">Separated link</a></li>
+            </ul>
+        </div>
+    </div>
     <x-toaster-hub />
     <!-- Core JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
-    @vite(['resources/assets/vendor/libs/popper/popper.js', 'resources/assets/vendor/js/bootstrap.js', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/assets/vendor/js/menu.js', 'resources/assets/js/main.js'])
+    @vite(['resources/assets/vendor/libs/popper/popper.js', 'resources/assets/vendor/js/bootstrap.js', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/assets/vendor/js/menu.js', 'resources/assets/js/extended-ui-perfect-scrollbar.js', 'resources/assets/js/main.js'])
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="
-    https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
-    "></script>
+                                                https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
+                                                "></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <!-- Page JS -->
