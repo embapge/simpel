@@ -3,6 +3,7 @@
 namespace App\Livewire\Forms;
 
 use App\Enums\TransactionStatus;
+use App\Events\TransactionFindNumberEvent;
 use App\Models\Customer;
 use App\Models\Document;
 use App\Models\Transaction;
@@ -55,6 +56,7 @@ class TransactionForm extends Form
 
     public function setTransaction(Transaction $transaction)
     {
+        $transaction->refresh();
         $this->transaction = $transaction;
         $this->fill([
             "id" => $transaction->id,
@@ -110,5 +112,6 @@ class TransactionForm extends Form
 
     public function generateNumber()
     {
+        TransactionFindNumberEvent::dispatch($this->transaction);
     }
 }

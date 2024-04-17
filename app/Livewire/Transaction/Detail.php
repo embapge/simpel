@@ -9,12 +9,10 @@ use App\Livewire\Forms\TransactionForm;
 use App\Livewire\Forms\TransactionServiceForm;
 use App\Livewire\Forms\TransactionSubTypeForm;
 use App\Models\Transaction;
-use App\Models\TransactionService;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
-use App\Livewire\Transaction\Detail as DetailInitialize;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\On;
 use Masmerise\Toaster\Toaster;
 use Livewire\WithFileUploads;
 
@@ -46,7 +44,6 @@ class Detail extends Component
         $this->form->setTransaction($transaction);
         $this->customer->setCustomer($transaction->customer);
         $this->transactionServices = $transaction->services->isNotEmpty() ? $transaction->services->map(fn ($service, $idx) => (new TransactionServiceForm($this, "transactionService"))->setService($service)) : collect([]);
-        // $this->transactionDocuments = $transaction->documents->isNotEmpty() ? $transaction->documents->map(fn ($document, $idx) => [(new TransactionDocumentForm($this, "transactionDocuments"))->setTransactionDocument(document: $document)]) : collect([]);
         $this->transactionDocuments = $transaction->documents->isNotEmpty() ? $transaction->documents->map(function ($document, $idx) use ($transaction) {
             return (new TransactionDocumentForm($this, "transactionDocuments." . $idx))->setTransactionDocument($transaction, $document);
         }) : collect([]);
@@ -54,6 +51,12 @@ class Detail extends Component
         $this->subType->setSubType($this->transaction->subType);
         $this->form->calculate();
         $this->generateable = $transaction->documents->whereNotNull("pivot.date")->whereNotNull("pivot.file")->isNotEmpty();
+    }
+
+    #[On('echo:generate.number.{transaction.id},TransactionFindNumberEvent')]
+    public function notifyNumberGenerated()
+    {
+        Toaster::success("Nomor transaksi telah di generate");
     }
 
     public function addService()
@@ -145,6 +148,12 @@ class Detail extends Component
         Toaster::success("Data berhasil diubah");
     }
 
+    public function updateNumberDisplay()
+    {
+        $this->form->number_display = Transaction::find($this->transaction->id)->number_display;
+        Toaster::success("Nomor berhasil di update");
+    }
+
     public function updateDocuments()
     {
     }
@@ -167,8 +176,9 @@ class Detail extends Component
 
     public function generateNumber()
     {
-        $this->form->generateNumber();
-        Toaster::success("Nomor Transaksi berhasil di generate");
+        if ($this->form->number_display == "DRAFT") {
+            $this->form->generateNumber();
+        }
     }
 
     public function generateInvoice()

@@ -16,9 +16,15 @@
                                         <h4 class="text-bold mb-0">Transaksi #</h4><span
                                             class="form-control-sm h-1 w-30 py-0 px-1 m-0 text-uppercase ms-1 top-0">{{ $form->number_display }}</span>
                                         @if ($editTransaction)
+                                            @if ($form->number_display == 'DRAFT')
+                                                <button type="button"
+                                                    class="badge badge-center rounded-pill bg-label-primary"><i
+                                                        class="bx bx-refresh" wire:click='generateNumber'></i></button>
+                                            @endif
                                             <button type="button"
                                                 class="badge badge-center rounded-pill bg-label-primary"><i
-                                                    class="bx bx-refresh" wire:click='generateNumber'></i></button>
+                                                    class="bx bxs-hand-left"
+                                                    wire:click='updateNumberDisplay'></i></button>
                                         @endif
                                         {{-- <input type="text"
                                             class="form-control-sm h-1 w-30 py-0 px-1 m-0 text-uppercase ms-1 top-0 @if ($editTransaction) border-1 @else border-0 @endif"
@@ -140,7 +146,8 @@
                                                 <td colspan="2">
                                                     <textarea rows="1" name="" id=""
                                                         class="form-control @if ($editService) border-1 @else border-0 @endif"
-                                                        wire:model='transactionServices.{{ $iService }}.description' @if (!$editService) readonly @endif></textarea>
+                                                        wire:model='transactionServices.{{ $iService }}.description'
+                                                        @if (!$editService) readonly @endif></textarea>
                                                 </td>
                                                 <td class="text-nowrap"><input type="text"
                                                         class="form-control w-100 @if ($editService) border-1 @else border-0 @endif"
