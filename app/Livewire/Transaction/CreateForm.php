@@ -61,7 +61,7 @@ class CreateForm extends Component
         ]);
 
         $transaction = $this->form->store();
-        $this->transactionDocuments = collect($this->transactionDocumentTemplate)->pluck("documents")->collapse()->whereIn("id", $this->documents)->map(fn ($document) => (new TransactionDocumentForm($this, "transactionDocument"))->setTransactionDocument(document: $document)->firstCreate($transaction));
+        $this->transactionDocuments = collect($this->transactionDocumentTemplate)->pluck("documents")->collapse()->whereIn("id", $this->documents)->map(fn ($document) => (new TransactionDocumentForm($this, "transactionDocument"))->setTransactionDocument($transaction, $document)->store());
 
         // Reset
         $this->customer->resetCustom();

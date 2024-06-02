@@ -56,9 +56,9 @@
             </g>
           </svg>
         </span> --}}
-            <img src="{{ Vite::asset('resources/images/logo/Logo-Sinar-Laut-Maritim.png') }}" alt=""
-                width="35%">
-            <span class="app-brand-text demo menu-text fw-bolder m-0 p-0">Sinar Lautan <br> Maritim</span>
+            <img src="{{ Vite::asset('resources/images/logo/Logo-Sinar-Laut-Maritim.png') }}" alt="" width="50%"
+                class="mx-auto">
+            {{-- <span class="app-brand-text demo menu-text fw-bolder m-0 p-0">Sinar Lautan <br> Maritim</span> --}}
         </a>
 
         <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
@@ -76,13 +76,22 @@
         <li class="menu-item {{ request()->is('customer*') ? 'active' : '' }}">
             <a href="{{ route('customer') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-user-account"></i>
-                <div data-i18n="Analytics">Customer</div>
+                <div data-i18n="Customer">Customer</div>
             </a>
         </li>
         <li class="menu-item {{ request()->is('document*') ? 'active' : '' }}">
             <a href="{{ route('document') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-box"></i>
-                <div data-i18n="Analytics">Document</div>
+                <div data-i18n="Document">Document</div>
+            </a>
+        </li>
+        <li class="menu-header small text-uppercase">
+            <span class="menu-header-text">Verification</span>
+        </li>
+        <li class="menu-item {{ request()->is('verification*') ? 'active' : '' }}">
+            <a href="{{ route('transaction') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-check-double"></i>
+                <div data-i18n="Verification">Verification</div>
             </a>
         </li>
         <li class="menu-header small text-uppercase">
@@ -91,7 +100,13 @@
         <li class="menu-item {{ request()->is('transaction*') ? 'active' : '' }}">
             <a href="{{ route('transaction') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-ship"></i>
-                <div data-i18n="Analytics">Transaction</div>
+                <div data-i18n="Transaction">Transaction</div>
+            </a>
+        </li>
+        <li class="menu-item {{ request()->is('invoice*') ? 'active' : '' }}">
+            <a href="{{ route('invoice') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Invoice">Invoice</div>
             </a>
         </li>
         <!-- Dashboard -->

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('verification_phones', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid('verification_id')->constrained("verifications", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid('verification_id')->constrained("verifications", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 50);
             $table->string("number", 50);
             $table->timestamps();

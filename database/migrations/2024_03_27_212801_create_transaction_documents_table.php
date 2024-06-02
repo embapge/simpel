@@ -9,12 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('transaction_documents', function (Blueprint $table) {
-            $table->foreignUuid("transaction_id")->constrained("transactions", "id");
-            $table->foreignUuid("document_id")->constrained("documents", "id");
+            $table->foreignUuid("transaction_id")->constrained("transactions", "id")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid("document_id")->constrained("documents", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->dateTime("date")->nullable();
             $table->string("file", 50)->nullable();
-            $table->foreignUuid("created_by")->nullable()->constrained("users", "id");
-            $table->foreignUuid("updated_by")->nullable()->constrained("users", "id");
+            $table->foreignUuid("created_by")->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid("updated_by")->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->timestamps();
         });
     }

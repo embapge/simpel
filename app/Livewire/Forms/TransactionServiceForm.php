@@ -44,17 +44,18 @@ class TransactionServiceForm extends Form
 
     public function patch()
     {
+        $this->validate();
         TransactionService::find($this->id)->update($this->only("name", "description", "price"));
     }
 
     public function store(Transaction $transaction)
     {
+        $this->validate();
         $transaction->services()->create($this->only("name", "price", "description"));
     }
 
     public function destroy()
     {
         TransactionService::find($this->id)->delete();
-        $this->reset();
     }
 }

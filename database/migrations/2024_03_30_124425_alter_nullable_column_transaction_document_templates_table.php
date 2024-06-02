@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transaction_document_templates', function (Blueprint $table) {
-            $table->text("description")->change();
+            // $table->text("description")->change();
         });
     }
 };

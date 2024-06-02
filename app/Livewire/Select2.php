@@ -15,6 +15,6 @@ class Select2 extends Component
 
     public function render()
     {
-        return view('livewire.select2', ["datas" => $this->datas]);
+        return view('livewire.select2');
     }
 }

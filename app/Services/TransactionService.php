@@ -37,7 +37,7 @@ class TransactionService
     public function getNumberDisplay($date)
     {
         $transaction = Transaction::where(DB::raw("DATE_FORMAT(created_at, '%Y')"), Carbon::parse($date)->format('Y'))->whereNotNull("number_display")->orderByDesc("number_display")->latest()->first();
-        return $transaction ? explode("/", $transaction)[0] : 1;
+        return $transaction ? explode("/", $transaction->number_display)[0] + 1 : 1;
     }
 
     public function generateNumberDisplay($date)
@@ -48,7 +48,7 @@ class TransactionService
         }
 
         $this->transaction->update([
-            "number_display" => str_pad($number, 5, 0, STR_PAD_LEFT) . "/SMPL/INV/" . Carbon::parse($date)->format("Y")
+            "number_display" => str_pad($number, 5, 0, STR_PAD_LEFT) . "/SMPL/TRNSCTN/" . Carbon::parse($date)->format("Y")
         ]);
 
         return $this->transaction;

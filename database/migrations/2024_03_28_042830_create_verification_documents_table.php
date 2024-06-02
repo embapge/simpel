@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('verification_documents', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid('verification_id')->constrained("verifications", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid('verification_id')->constrained("verifications", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUuid('document_id')->constrained("documents", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->dateTime("date")->nullable();
             $table->string("file", 50)->nullable();

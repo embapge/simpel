@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('transaction_services', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid("transaction_id")->constrained("transactions", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid("transaction_id")->constrained("transactions", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 20);
             $table->decimal("price", 20, 2)->default(0);
             $table->text("description")->nullable();

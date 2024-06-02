@@ -48,13 +48,42 @@ class TransactionDocumentForm extends Form
         return $this;
     }
 
-    public function firstCreate(Transaction $transaction)
+    public function store()
     {
-        $this->fill(["transaction" => $transaction]);
-        $transaction->documents()->attach($this->document_id);
+        $this->transaction->refresh();
+        if ($this->transaction->documents->where("id", $this->document_id)->isEmpty()) {
+            $this->transaction->documents()->attach($this->document_id);
+            $this->document = Document::find($this->document_id);
+            $this->setTransactionDocument($this->transaction, $this->document);
+            return true;
+        }
+        return false;
     }
 
-    public function store()
+    public function destroy()
+    {
+        if ($this->file && Storage::exists($this->file)) {
+            Storage::delete($this->file);
+        }
+
+        $this->transaction->documents()->detach($this->document->id);
+    }
+
+    public function empty()
+    {
+        if ($this->file && Storage::exists($this->file)) {
+            Storage::delete($this->file);
+
+            $this->transaction->documents()->updateExistingPivot($this->document->id, [
+                "file" => "",
+                "date" => null,
+            ]);
+
+            $this->reset("file", "date");
+        }
+    }
+
+    public function upload()
     {
         $this->fill([
             "file" => $this->file,

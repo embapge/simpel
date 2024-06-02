@@ -98,6 +98,6 @@ return [
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
-    ],
+    ], 'reply_to' => ['address' => 'helpdesk@sinarlautanmaritim.com', 'name' => 'Helpdesk Sinar Lautan Maritim'],
 
 ];

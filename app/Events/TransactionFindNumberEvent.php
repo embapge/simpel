@@ -16,23 +16,14 @@ class TransactionFindNumberEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(public Transaction $transaction)
+    public function __construct(public $transactionId)
     {
-        //
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
-     */
     public function broadcastOn(): array
     {
         return [
-            new Channel("generate.number.{$this->transaction->id}"),
+            new Channel("generate.number.transaction.{$this->transactionId}"),
         ];
     }
 }

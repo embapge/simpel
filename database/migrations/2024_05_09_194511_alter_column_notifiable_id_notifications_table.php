@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->text("internal_note")->nullable();
+        Schema::table('notifications', function (Blueprint $table) {
+            $table->uuid("notifiable_id")->change();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transactions', function (Blueprint $table) {
-            $table->removeColumn("internal_note");
+        Schema::table('notifications', function (Blueprint $table) {
+            //
         });
     }
 };

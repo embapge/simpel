@@ -21,10 +21,6 @@
                                                     class="badge badge-center rounded-pill bg-label-primary"><i
                                                         class="bx bx-refresh" wire:click='generateNumber'></i></button>
                                             @endif
-                                            <button type="button"
-                                                class="badge badge-center rounded-pill bg-label-primary"><i
-                                                    class="bx bxs-hand-left"
-                                                    wire:click='updateNumberDisplay'></i></button>
                                         @endif
                                         {{-- <input type="text"
                                             class="form-control-sm h-1 w-30 py-0 px-1 m-0 text-uppercase ms-1 top-0 @if ($editTransaction) border-1 @else border-0 @endif"
@@ -138,10 +134,18 @@
                                                             @if (!$editService) readonly @endif>
                                                     </td>
                                                 @endif
-                                                <td><input type="text"
-                                                        class="form-control w-100 @if ($editService) border-1 @else border-0 @endif"
+                                                <td>
+                                                    <input type="text"
+                                                        class="form-control w-100 @if ($editService) border-1 @else border-0 @endif @error('transactionServices.' . $iService . '.name')
+                                                        is-invalid
+                                                    @enderror"
                                                         wire:model='transactionServices.{{ $iService }}.name'
                                                         @if (!$editService) readonly @endif>
+                                                    @error('transactionServices.' . $iService . '.name')
+                                                        <span class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </span>
+                                                    @enderror
                                                 </td>
                                                 <td colspan="2">
                                                     <textarea rows="1" name="" id=""
@@ -150,9 +154,16 @@
                                                         @if (!$editService) readonly @endif></textarea>
                                                 </td>
                                                 <td class="text-nowrap"><input type="text"
-                                                        class="form-control w-100 @if ($editService) border-1 @else border-0 @endif"
+                                                        class="form-control w-100 @if ($editService) border-1 @else border-0 @endif @error('transactionServices.' . $iService . '.price')
+                                                        is-invalid
+                                                    @enderror"
                                                         wire:model='transactionServices.{{ $iService }}.price'
                                                         @if (!$editService) readonly @endif>
+                                                    @error('transactionServices.' . $iService . '.price')
+                                                        <span class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </span>
+                                                    @enderror
                                                 </td>
                                                 @if ($editService)
                                                     @if ($service->id)
@@ -242,26 +253,36 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4 text-end">
-                                            @if (!$editDocument)
+                                            @if (!$editDocument && $transaction->invoices->isEmpty())
                                                 <button type="button" class="btn btn-icon btn-outline-warning"
                                                     wire:click='editDocumentMode'>
                                                     <span class="tf-icons bx bx-pencil"></span>
                                                 </button>
-                                            @else
+                                            @elseif($editDocument)
                                                 <div wire:loading.remove>
                                                     <button type="button" class="btn btn-icon btn-outline-primary"
                                                         wire:click='storeDocument'>
                                                         <span class="tf-icons bx bx-save"></span>
                                                     </button>
-                                                    <button type="button" class="btn btn-icon btn-outline-danger"
+                                                    <button type="button" class="btn btn-icon btn-outline-warning"
                                                         wire:click='editDocumentMode'>
                                                         <span class="tf-icons bx bx-x"></span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-icon btn-outline-danger"
+                                                        wire:click='destroyDocuments'
+                                                        wire:confirm='Apakah anda yakin akan menghapus file?'>
+                                                        <span class="tf-icons bx bx-trash"></span>
+                                                    </button>
+                                                    <button type="button" class="btn btn-icon btn-outline-secondary"
+                                                        wire:click='emptyDocuments'
+                                                        wire:confirm='Apakah anda yakin akan mengkosongkan file?'>
+                                                        <span class="tf-icons bx bx bx-archive-out"></span>
                                                     </button>
                                                 </div>
                                                 <div wire:loading
                                                     wire:target="{{ $this->transactionDocuments->map(function ($document, $idx) {
                                                             return "transactionDocuments.{$idx}.file";
-                                                        })->join(', ') }}">
+                                                        })->join(', ,') }}destroyDocuments,editDocumentMode">
                                                     Loading...</div>
                                             @endif
                                         </div>
@@ -310,11 +331,40 @@
                                         </div>
                                     </div> --}}
                                     <table class="transaction-documents">
+                                        <tr class="align-content-center text-xs">
+                                            <td colspan="3" class="text-end">
+                                                @if (!$editDetailDocument && $transaction->invoices->isEmpty())
+                                                    <button type="button"
+                                                        class="badge badge-center rounded-pill bg-label-warning"
+                                                        wire:click="editDetailDocumentMode">
+                                                        <i class="bx bx-pencil"></i>
+                                                    </button>
+                                                @elseif($editDetailDocument)
+                                                    <button type="button"
+                                                        class="badge badge-center rounded-pill bg-label-primary"
+                                                        wire:click="saveDetailDocument">
+                                                        <i class="bx bx-save"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                        class="badge badge-center rounded-pill bg-label-success"
+                                                        wire:click="addDetailDocument">
+                                                        <i class="bx bx-plus"></i>
+                                                    </button>
+                                                    <button type="button"
+                                                        class="badge badge-center rounded-pill bg-label-danger"
+                                                        wire:click="editDetailDocumentMode">
+                                                        <i class="bx bx-x"></i>
+                                                    </button>
+                                                @endif
+                                            </td>
+                                        </tr>
                                         @foreach ($transactionDocuments as $iDocument => $document)
                                             <tr class="align-content-center text-xs" wire:key='{{ $iDocument }}'>
                                                 <td class="w-px-200">
                                                     @if ($editDocument)
-                                                        <input type="checkbox" class="form-check-input me-1">
+                                                        <input type="checkbox" class="form-check-input me-1"
+                                                            wire:model='checkedDocument'
+                                                            value="{{ $document->document->id }}">
                                                     @endif
                                                     {{ $document->document->name }}
                                                     <br>
@@ -336,7 +386,7 @@
                                                             <button type="submit"
                                                                 class="text-primary">{{ Str::limit(Str::of($document->file)->explode('/')->last(),32) }}</button>
                                                         </form>
-                                                    @else
+                                                    @elseif(!$editDocument)
                                                         Dokumen belum terpenuhi
                                                     @endif
                                                 </td>
@@ -349,8 +399,10 @@
                                                                 class="bx @if ($document->date) bx-check
                                                                             @else
                                                                             bx-loader-circle @endif bx-xs"></i></span>
-                                                        @if ($transaction->documents->where('id', $document->document->id)->first()->pivot->file != $document->file)
-                                                            <button type="submit"
+                                                        @if (
+                                                            $editDocument &&
+                                                                $transaction->documents->where('id', $document->document->id)->first()->pivot->file != $document->file)
+                                                            <button type="button"
                                                                 class="badge 
                                                                     bg-danger rounded-pill p-1"
                                                                 wire:click='revertUploadDocument("{{ $document->document->id }}")'><i
@@ -360,6 +412,29 @@
                                                 </td>
                                             </tr>
                                         @endforeach
+                                        @if ($editDetailDocument)
+                                            @foreach ($documents as $iNewDoc => $document)
+                                                <tr class="align-content-center text-xs"
+                                                    wire:key='{{ $iNewDoc }}'>
+                                                    <td class="w-px-200" colspan="2">
+                                                        <x-select2 class="form-select form-select-sm mb-1 select2"
+                                                            :datas='$documentsModel'
+                                                            wire:model="documents.{{ $iNewDoc }}.document_id"
+                                                            name="documents[]"
+                                                            id="documents{{ $iNewDoc }}document_id" />
+                                                        <x-alert-message
+                                                            name="documents.{{ $iNewDoc }}.document_id" />
+                                                    </td>
+                                                    <td class="text-end w-1">
+                                                        <button type="button"
+                                                            class="badge badge-center rounded-pill bg-label-danger"
+                                                            wire:click='removeDetailDocument("{{ $iNewDoc }}")'>
+                                                            <i class="bx bx-minus"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
                                     </table>
                                     <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
                                         <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
@@ -404,24 +479,30 @@
                                     </div>
                                 </div>
                                 <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    <div class="row text-sm">
-                                        <div class="col p-0">
-                                            <div class="list-group">
-                                                <a href="javascript:void(0);"
-                                                    class="list-group-item list-group-item-action flex-column align-items-start">
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <h6 class="mb-0">saadhasd-asdasdasdsad-asdasdasaas</h6>
-                                                        <small class="text-muted">Rp. 3.350.000</small>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <small>03 Januari 2024</small>
-                                                        <small class="text-muted">Rp. 450.000</small>
-                                                    </div>
-                                                    <small class="text-muted">Donec id elit non mi porta.</small>
-                                                </a>
+                                    @foreach ($transaction->invoices as $invoice)
+                                        <div class="row text-sm mb-3">
+                                            <div class="col p-0">
+                                                <div class="list-group">
+                                                    <a href="{{ route('invoice.detail', ['invoice' => $invoice->id]) }}"
+                                                        class="list-group-item list-group-item-action flex-column align-items-start"
+                                                        target="__blank">
+                                                        <div class="d-flex justify-content-between w-100">
+                                                            <h6 class="mb-0">
+                                                                {{ $invoice->number_display ?? $invoice->id }}
+                                                            </h6>
+                                                            <small class="text-muted">@uang($invoice->total)</small>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between w-100">
+                                                            <small>03 Januari 2024</small>
+                                                            <small class="text-muted">Rp. 450.000</small>
+                                                        </div>
+                                                        <small
+                                                            class="text-muted">{{ $invoice->internal_note }}</small>
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    @endforeach
                                     <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
                                         <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                                     </div>

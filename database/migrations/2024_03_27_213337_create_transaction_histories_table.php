@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::create('transaction_histories', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid("transaction_id")->constrained("transactions", "id");
+            $table->foreignUuid("transaction_id")->constrained("transactions", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->dateTime("date");
             $table->enum("status", ["verification", "progress", "done", "cancel"]);
             $table->text("description");
             $table->timestamps();
             $table->primary("id");
-            $table->foreignUuid("created_by")->nullable()->constrained("users", "id");
-            $table->foreignUuid("updated_by")->nullable()->constrained("users", "id");
+            $table->foreignUuid("created_by")->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid("updated_by")->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 

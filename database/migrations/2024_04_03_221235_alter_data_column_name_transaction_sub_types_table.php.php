@@ -22,7 +22,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transaction_sub_types', function (Blueprint $table) {
-            $table->string("name", 50)->change();
         });
     }
 };

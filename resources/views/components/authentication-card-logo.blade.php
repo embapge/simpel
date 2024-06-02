@@ -5,4 +5,5 @@
     </svg>
 </a> --}}
 
-<img src="{{ Vite::asset("resources/images/logo/Logo-Sinar-Laut-Maritim.png") }}" alt="">
+<img src="{{ Vite::asset('resources/images/logo/Logo-Sinar-Laut-Maritim.png') }}" alt="" width="25%"
+    style="margin-left: auto;margin-right: auto">

@@ -1,10 +1,15 @@
 <?php
 
 use App\Http\Controllers\DocumentController;
-use App\Livewire\Transaction\Detail;
+use App\Livewire\Invoice\Detail as InvoiceDetail;
+use App\Livewire\Invoice\Index as Invoice;
+use App\Livewire\Transaction\Detail as TransactionDetail;
+use App\Mail\TestMail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,7 +37,15 @@ Route::middleware([
             return view("transaction.index");
         })->name("transaction");
 
-        Route::get("/{transaction}/detail", Detail::class)->name("transaction.detail");
+        Route::get("/{transaction}/detail", TransactionDetail::class)->name("transaction.detail");
+    });
+
+    Route::prefix('invoice')->group(function () {
+        Route::get("/", Invoice::class)->name("invoice");
+        Route::get("/{invoice}/detail", InvoiceDetail::class)->name("invoice.detail");
+        Route::get("/print", function () {
+            return view("invoice.pdf");
+        })->name("invoice.print");
     });
 
     Route::controller(DocumentController::class)->group(function () {
@@ -42,4 +55,9 @@ Route::middleware([
             });
         });
     });
+
+    // Route::get("test/mailable", function () {
+    //     Mail::to("barata@ciptamedianusa.net")->send(new TestMail());
+    //     dd("masuk");
+    // });
 });

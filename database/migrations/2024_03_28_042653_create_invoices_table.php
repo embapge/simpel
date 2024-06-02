@@ -23,6 +23,7 @@ return new class extends Migration
             $table->decimal("tax", 20, 0)->default(0);
             $table->decimal("stamp", 20, 0)->default(0);
             $table->enum("status", ["draft", "unpaid", "paid", "lesspaid", "cancel"])->default("draft")->comment("Ini Adalah status pembayaran");
+            $table->text("internal_note")->nullable();
             $table->string("customer_name", 50);
             $table->string("customer_pic_name", 50)->nullable();
             $table->text("customer_address");

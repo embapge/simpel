@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^2.1",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.0",
         "laravel/reverb": "@beta",
@@ -16,10 +17,12 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.0",
         "masmerise/livewire-toaster": "^2.2",
+        "midtrans/midtrans-php": "^2.5",
         "openspout/openspout": "^4.23",
         "power-components/livewire-powergrid": "5.4.8",
         "richan-fongdasen/eloquent-blameable": "^1.10",
         "riskihajar/terbilang": "2.0.8",
+        "spatie/laravel-webhook-client": "^3.3",
         "wire-elements/modal": "^2.0"
     },
     "require-dev": {

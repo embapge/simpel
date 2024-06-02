@@ -112,6 +112,6 @@ class TransactionForm extends Form
 
     public function generateNumber()
     {
-        TransactionFindNumberEvent::dispatch($this->transaction);
+        TransactionFindNumberEvent::dispatch($this->transaction->id);
     }
 }

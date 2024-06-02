@@ -2,16 +2,21 @@
 
 namespace App\Livewire\Transaction;
 
+use App\Http\Resources\TransactionPackage;
 use App\Livewire\Forms\CustomerForm;
 use App\Livewire\Forms\DocumentForm;
+use App\Livewire\Forms\InvoiceForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
 use App\Livewire\Forms\TransactionServiceForm;
 use App\Livewire\Forms\TransactionSubTypeForm;
+use App\Models\Document;
 use App\Models\Transaction;
+use App\Models\TransactionType;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Masmerise\Toaster\Toaster;
 use Livewire\WithFileUploads;
@@ -25,9 +30,11 @@ class Detail extends Component
     public TransactionForm $form;
     public TransactionSubTypeForm $subType;
     public CustomerForm $customer;
-    public $documents = [];
-    public $transactionServices = [];
-    public $transactionDocuments = [];
+    public Collection $documents;
+    public InvoiceForm $invoice;
+    public $documentsModel = [];
+    public Collection $transactionServices;
+    public Collection $transactionDocuments;
     public $number_display = "";
     public $parentCheckbox = false;
     public $services;
@@ -35,30 +42,44 @@ class Detail extends Component
     public $checkedDocument = [];
     public $editService = false;
     public $editDocument = false;
+    public $editDetailDocument = false;
     public $editTransaction = false;
     public $generateable;
 
     public function mount(Transaction $transaction)
     {
-        $transaction->load(["documents", "services", "histories"]);
+        $transaction->load(["documents", "services", "histories", "invoices"]);
         $this->form->setTransaction($transaction);
         $this->customer->setCustomer($transaction->customer);
         $this->transactionServices = $transaction->services->isNotEmpty() ? $transaction->services->map(fn ($service, $idx) => (new TransactionServiceForm($this, "transactionService"))->setService($service)) : collect([]);
         $this->transactionDocuments = $transaction->documents->isNotEmpty() ? $transaction->documents->map(function ($document, $idx) use ($transaction) {
             return (new TransactionDocumentForm($this, "transactionDocuments." . $idx))->setTransactionDocument($transaction, $document);
         }) : collect([]);
-
         $this->subType->setSubType($this->transaction->subType);
         $this->form->calculate();
-        $this->generateable = $transaction->documents->whereNotNull("pivot.date")->whereNotNull("pivot.file")->isNotEmpty();
+        $this->checkGenerateable();
+        $this->documents = collect([]);
+        $this->documentsModel = Document::whereNotIn("id", $this->transactionDocuments->pluck("document.id"))->get();
     }
 
-    #[On('echo:generate.number.{transaction.id},TransactionFindNumberEvent')]
-    public function notifyNumberGenerated()
+    // Transaction
+    public function saveTransaction()
     {
-        Toaster::success("Nomor transaksi telah di generate");
+        $this->form->patch();
+        $this->editTransactionMode();
+        Toaster::success("Data berhasil diubah");
     }
 
+    public function generateNumber()
+    {
+        if ($this->form->number_display == "DRAFT") {
+            Toaster::warning("Mohon menunggu untuk nomor transaksi, dikarenakan masuk ke dalam antrian");
+            $this->form->generateNumber();
+        }
+    }
+    // End Transaction
+
+    // TransactionServices
     public function addService()
     {
         $this->transactionServices->push((new TransactionServiceForm($this, "transactionService")));
@@ -69,34 +90,192 @@ class Detail extends Component
         $this->transactionServices->pull($idx);
     }
 
+    public function saveServices()
+    {
+        foreach ($this->transactionServices as $service) {
+            if (!$service->id) {
+                $service->store($this->transaction);
+            } else {
+                $service->patch();
+            }
+        }
+
+        $this->form->calculate();
+        $this->reset("editService");
+        $this->mount($this->transaction);
+        Toaster::success("Data berhasil diubah");
+    }
+
+    public function destroyService($id)
+    {
+        try {
+            $this->transactionServices->where("id", $id)->first()->destroy();
+            $this->transactionServices = $this->transactionServices->filter(fn ($service) => $service->id != $id)->values();
+            $this->form->calculate();
+            Toaster::success("Data layanan berhasil dihapus");
+        } catch (\Throwable $th) {
+            Toaster::error("Data layanan tidak ditemukan");
+        }
+    }
+    // End TransactionServices
+
+    // Document
+    public function storeDocument()
+    {
+        foreach ($this->transactionDocuments as $transactionDocument) {
+            $transactionDocument->upload();
+        }
+        $this->mount($this->transaction);
+        $this->editDocument = false;
+        $this->dispatch("document-updated");
+        Toaster::success("File berhasil ditambahkan");
+    }
+
+    public function revertUploadDocument($id)
+    {
+        try {
+            $transactionDocument = $this->transaction->documents->where("id", $id);
+            if ($transactionDocument->first()->pivot->file) {
+                $this->transactionDocuments->where("document.id", $id)->first()->fill(["file" => $transactionDocument->first()->pivot->file]);
+            } else {
+                $this->transactionDocuments->where("document.id", $id)->first()->reset("file");
+            }
+            $this->dispatch("document-updated");
+            $this->js('$("input#transactionDocument' . $this->transaction->documents->where("id", $id)->keys()[0] . 'file").val("")');
+            Toaster::success("Dokumen berhasil dikembalikan");
+        } catch (\Throwable $th) {
+            Toaster::error("Terjadi Kesalahan");
+        }
+    }
+
+    public function emptyDocuments()
+    {
+        if (!count($this->checkedDocument)) {
+            Toaster::error("Silahkan pilih dokumen untuk mengkosongkan");
+            return;
+        }
+
+        foreach ($this->transactionDocuments->whereIn("document.id", $this->checkedDocument) as $document) {
+            $document->empty();
+        }
+
+        $this->dispatch("document-updated");
+        $this->editDocumentMode();
+        Toaster::success("Dokumen berhasil dikosongkan");
+    }
+
+    public function destroyDocuments()
+    {
+        if (!count($this->checkedDocument)) {
+            Toaster::error("Silahkan pilih dokumen untuk menghapus");
+            return;
+        }
+
+        foreach ($this->transactionDocuments->whereIn("document.id", $this->checkedDocument) as $document) {
+            $document->destroy();
+        }
+        $this->transactionDocuments = $this->transactionDocuments->whereNotIn("document.id", $this->checkedDocument);
+        $this->dispatch("document-updated");
+        $this->editDocumentMode();
+        Toaster::success("Dokumen berhasil dihapus");
+    }
+    // Detail Document
+    public function addDetailDocument()
+    {
+        $this->documents->push((new TransactionDocumentForm($this, "document." . $this->documents->keys()->last() ?? 0))->setTransactionDocument($this->transaction));
+        $this->dispatch("document-updated");
+    }
+
+    public function saveDetailDocument()
+    {
+        foreach ($this->documents as $document) {
+            $document->validate();
+            if ($document->store()) {
+                $this->transaction->refresh();
+                $this->transactionDocuments->push($document);
+            }
+        }
+
+        $this->documents = collect([]);
+        $this->dispatch("document-updated");
+        $this->editDetailDocumentMode();
+        Toaster::success("Dokumen berhasil dibuat");
+    }
+
+    public function removeDetailDocument($idx)
+    {
+        $this->documents->pull($idx);
+        $this->documents->values();
+        $this->dispatch("document-updated");
+    }
+    // End Detail Document
+    // End Document
+
+    // Edit Mode
     public function editServiceMode()
     {
-        // dd($this->transactionServices);
         $this->transactionServices = $this->transactionServices->whereNotNull("id");
         $this->editService = !$this->editService;
     }
 
     public function editDocumentMode()
     {
+        $this->reset("checkedDocument");
         $this->editDocument = !$this->editDocument;
+    }
+
+    public function editDetailDocumentMode()
+    {
+        $this->documents = collect([]);
+        $this->editDetailDocument = !$this->editDetailDocument;
     }
 
     public function editTransactionMode()
     {
         $this->editTransaction = !$this->editTransaction;
     }
+    // End Edit Mode
 
-    public function storeDocument()
+    // Invoice
+    public function generateInvoice()
     {
-        foreach ($this->transactionDocuments as $transactionDocument) {
-            $transactionDocument->store();
-        }
-        $this->mount($this->transaction);
-        $this->editDocument = false;
+        $this->invoice->store($this->transaction);
+        $this->transaction->refresh();
+        $this->transaction->load(["documents", "services", "histories", "invoices"]);
+        $this->dispatch("invoice-refresh-table");
+        Toaster::success("Invoice berhasil di generate");
+    }
+    // End Invoice
 
-        Toaster::success("File berhasil ditambahkan");
+    public function render()
+    {
+        return view('livewire.transaction.detail');
     }
 
+    // Event
+    #[On('echo:generate.number.transaction.{form.id},TransactionFindNumberEvent')]
+    public function notifyNumberGenerated()
+    {
+        $this->transaction->refresh();
+        $this->transaction->load(["documents", "services", "histories", "invoices"]);
+        $this->form->setTransaction($this->transaction);
+        Toaster::success("Nomor transaksi telah di generate");
+    }
+
+    #[On('document-updated')]
+    public function checkGenerateable()
+    {
+        $this->generateable = $this->transaction->documents->whereNotNull("pivot.date")->whereNotNull("pivot.file")->count() == $this->transaction->documents->count();
+    }
+
+    #[On('document-updated')]
+    public function refreshDocument()
+    {
+        $this->documentsModel = Document::whereNotIn("id", $this->transactionDocuments->pluck("document.id"))->get();
+    }
+    // End Event
+
+    // Function
     public function checkboxParent()
     {
         if ($this->parentCheckbox) {
@@ -124,83 +303,5 @@ class Detail extends Component
             $this->js("$('#parentCheck').prop('checked', false)");
         }
     }
-
-    public function saveServices()
-    {
-        foreach ($this->transactionServices as $service) {
-            if (!$service->id) {
-                $service->store($this->transaction);
-            } else {
-                $service->patch();
-            }
-        }
-
-        $this->form->calculate();
-        $this->reset("editService");
-        $this->mount($this->transaction);
-        Toaster::success("Data berhasil diubah");
-    }
-
-    public function saveTransaction()
-    {
-        $this->form->patch();
-        $this->editTransactionMode();
-        Toaster::success("Data berhasil diubah");
-    }
-
-    public function updateNumberDisplay()
-    {
-        $this->form->number_display = Transaction::find($this->transaction->id)->number_display;
-        Toaster::success("Nomor berhasil di update");
-    }
-
-    public function updateDocuments()
-    {
-    }
-
-    public function revertUploadDocument($id)
-    {
-        try {
-            $transactionDocument = $this->transaction->documents->where("id", $id);
-            if ($transactionDocument->first()->pivot->file) {
-                $this->transactionDocuments->where("document.id", $id)->first()->fill(["file" => $transactionDocument->first()->pivot->file]);
-            } else {
-                $this->transactionDocuments->where("document.id", $id)->first()->reset("file");
-            }
-            $this->js('$("input#transactionDocument' . $this->transaction->documents->where("id", $id)->keys()[0] . 'file").val("")');
-            Toaster::success("Dokumen berhasil dikembalikan");
-        } catch (\Throwable $th) {
-            Toaster::error("Terjadi Kesalahan");
-        }
-    }
-
-    public function generateNumber()
-    {
-        if ($this->form->number_display == "DRAFT") {
-            $this->form->generateNumber();
-        }
-    }
-
-    public function generateInvoice()
-    {
-        $this->form->generateInvoice();
-        Toaster::success("Invoice berhasil di generate");
-    }
-
-    public function destroyService($id)
-    {
-        try {
-            $this->transactionServices->where("id", $id)->first()->destroy();
-            $this->transactionServices = $this->transactionServices->whereNotNull("id");
-            $this->form->calculate();
-            Toaster::success("Data layanan berhasil dihapus");
-        } catch (\Throwable $th) {
-            Toaster::error("Data layanan tidak ditemukan");
-        }
-    }
-
-    public function render()
-    {
-        return view('livewire.transaction.detail');
-    }
+    // End Function
 }

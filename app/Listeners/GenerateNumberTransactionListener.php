@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\TransactionFindNumberEvent;
+use App\Models\Transaction;
 use App\Services\TransactionService;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,6 +15,7 @@ class GenerateNumberTransactionListener implements ShouldQueue, ShouldHandleEven
     use InteractsWithQueue;
 
     public $tries = 1;
+    public Transaction $transaction;
 
     /**
      * Create the event listener.
@@ -28,7 +30,8 @@ class GenerateNumberTransactionListener implements ShouldQueue, ShouldHandleEven
      */
     public function handle(TransactionFindNumberEvent $event): void
     {
-        (new TransactionService)->setTransaction($event->transaction)->generateNumberDisplay($event->transaction->created_at->format("Y"));
+        $this->transaction = Transaction::find($event->transactionId);
+        (new TransactionService)->setTransaction($this->transaction)->generateNumberDisplay($this->transaction->created_at->format("Y"));
     }
 
     public function failed(TransactionFindNumberEvent $event, Throwable $exception): void

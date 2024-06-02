@@ -10,7 +10,7 @@
     <title>{{ $title ?? 'Empty' }}</title>
 
     <meta name="description" content="" />
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../assets/img/favicon/favicon.ico" />
 
@@ -27,7 +27,8 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/assets/vendor/fonts/boxicons.css', 'resources/assets/vendor/css/core.css', 'resources/assets/vendor/css/theme-default.css', 'resources/assets/css/demo.css', 'resources/assets/css/custom.css', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css', 'resources/assets/vendor/js/helpers.js', 'resources/assets/js/config.js', 'resources/assets/js/select2.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/assets/vendor/fonts/boxicons.css', 'resources/assets/vendor/css/core.css', 'resources/assets/vendor/css/theme-default.css', 'resources/assets/css/demo.css', 'resources/assets/css/custom.css', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css', 'resources/assets/vendor/js/helpers.js', 'resources/assets/js/config.js'])
+    @stack('midtrans')
 </head>
 
 <body>
@@ -79,73 +80,78 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
                   >
                 </li> --}}
 
-                            <!-- User -->
-                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
-                                <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
-                                    data-bs-toggle="dropdown">
-                                    <div class="avatar avatar-online">
-                                        <img src="{{ Vite::asset('resources/images/avatars/default.png') }}" alt
-                                            class="w-px-40 h-auto rounded-circle" />
-                                    </div>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-3">
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ Vite::asset('resources/images/avatars/default.png') }}"
-                                                            alt class="w-px-40 h-auto rounded-circle" />
+                            <!-- Notification -->
+                            <livewire:notification>
+                                <!--/ Notification -->
+
+                                <!-- User -->
+                                <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                    <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);"
+                                        data-bs-toggle="dropdown">
+                                        <div class="avatar avatar-online">
+                                            <img src="{{ Vite::asset('resources/images/avatars/default.png') }}" alt
+                                                class="w-px-40 h-auto rounded-circle" />
+                                        </div>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-3">
+                                                        <div class="avatar avatar-online">
+                                                            <img src="{{ Vite::asset('resources/images/avatars/default.png') }}"
+                                                                alt class="w-px-40 h-auto rounded-circle" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <span
+                                                            class="fw-semibold d-block">{{ Str::title(Auth::user()->name) }}</span>
+                                                        <small class="text-muted">Admin</small>
                                                     </div>
                                                 </div>
-                                                <div class="flex-grow-1">
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-divider"></div>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bx bx-user me-2"></i>
+                                                <span class="align-middle">My Profile</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <i class="bx bx-cog me-2"></i>
+                                                <span class="align-middle">Settings</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#">
+                                                <span class="d-flex align-items-center align-middle">
+                                                    <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+                                                    <span class="flex-grow-1 align-middle">Billing</span>
                                                     <span
-                                                        class="fw-semibold d-block">{{ Str::title(Auth::user()->name) }}</span>
-                                                    <small class="text-muted">Admin</small>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bx bx-user me-2"></i>
-                                            <span class="align-middle">My Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <i class="bx bx-cog me-2"></i>
-                                            <span class="align-middle">Settings</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="#">
-                                            <span class="d-flex align-items-center align-middle">
-                                                <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
-                                                <span class="flex-grow-1 align-middle">Billing</span>
-                                                <span
-                                                    class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
-                                            </span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <div class="dropdown-divider"></div>
-                                    </li>
-                                    <li>
-                                        <form action="{{ route('logout') }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item">
-                                                <i class="bx bx-power-off me-2"></i>
-                                                <span class="align-middle">Log Out</span>
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </li>
-                            <!--/ User -->
+                                                        class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <div class="dropdown-divider"></div>
+                                        </li>
+                                        <li>
+                                            <form action="{{ route('logout') }}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item">
+                                                    <i class="bx bx-power-off me-2"></i>
+                                                    <span class="align-middle">Log Out</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <!--/ User -->
+
                         </ul>
                     </div>
                 </nav>
@@ -194,11 +200,13 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
     <x-toaster-hub />
     <!-- Core JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
-    @vite(['resources/assets/vendor/libs/popper/popper.js', 'resources/assets/vendor/js/bootstrap.js', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/assets/vendor/js/menu.js', 'resources/assets/js/extended-ui-perfect-scrollbar.js', 'resources/assets/js/main.js'])
+    @vite(['resources/assets/vendor/libs/popper/popper.js', 'resources/assets/vendor/js/bootstrap.js', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/assets/vendor/js/menu.js', 'resources/assets/js/extended-ui-perfect-scrollbar.js', 'resources/assets/js/main.js', 'resources/assets/js/select2.js'])
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="
-                                                https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
-                                                "></script>
+    <script
+        src="
+                                                                                                                                                                                https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
+                                                                                                                                                                                ">
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
     <!-- Page JS -->

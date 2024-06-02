@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('customer_phones', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid('customer_id')->nullable()->constrained("customers", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid('customer_id')->nullable()->constrained("customers", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 50);
             $table->string("number", 50);
             $table->timestamps();

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('payments', function (Blueprint $table) {
             $table->uuid("id");
             $table->foreignUuid("invoice_id")->constrained("invoices", "id")->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignUuid("bank_account_id")->constrained("bank_accounts", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->enum("bank", ["bca", "bri", "mandiri", "permata", "bni", "cimb niaga"])->nullable();
             $table->decimal("amount", 20, 2)->default(0);
-            $table->enum("status", ["paid", "cancel"]);
+            $table->timestamp("issue_date")->nullable();
+            $table->timestamp("due_date")->nullable();
             $table->timestamps();
             $table->primary("id");
             $table->foreignUuid("created_by")->nullable()->constrained("users", "id")->cascadeOnUpdate()->restrictOnDelete();

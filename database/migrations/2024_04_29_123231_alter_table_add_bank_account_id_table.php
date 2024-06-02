@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('transaction_document_template_details', function (Blueprint $table) {
-            $table->integer("is_required")->default(0);
+        Schema::table('payments', function (Blueprint $table) {
+            $table->foreignUuid("bank_account_id")->nullable()->constrained("bank_accounts", "id")->cascadeOnUpdate()->restrictOnDelete();
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('transaction_document_template_details', function (Blueprint $table) {
-            $table->dropColumn(["is_required"]);
+        Schema::table('payments', function (Blueprint $table) {
+            //
         });
     }
 };

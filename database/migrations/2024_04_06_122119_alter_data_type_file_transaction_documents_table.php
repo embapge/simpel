@@ -19,7 +19,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('transaction_documents', function (Blueprint $table) {
-            $table->string("file", 50)->nullable()->change();
         });
     }
 };

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('invoice_services', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid("invoice_id")->constrained("invoices", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid("invoice_id")->constrained("invoices", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 50);
             $table->enum("type", ["beforeTax", "afterTax"])->default("beforeTax");
             $table->text("description")->nullable();

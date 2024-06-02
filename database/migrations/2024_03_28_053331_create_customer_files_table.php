@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('customer_files', function (Blueprint $table) {
             $table->uuid("id");
-            $table->foreignUuid('customer_id')->nullable()->constrained("customers", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignUuid('customer_id')->nullable()->constrained("customers", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignUuid('document_id')->nullable()->constrained("documents", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->string("name", 100);
             $table->integer("is_active")->default(1);

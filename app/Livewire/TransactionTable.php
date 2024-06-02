@@ -20,6 +20,7 @@ use PowerComponents\LivewirePowerGrid\PowerGridFields;
 use PowerComponents\LivewirePowerGrid\PowerGridComponent;
 use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 use Illuminate\Support\Str;
+use Masmerise\Toaster\Toaster;
 use NumberFormatter;
 
 final class TransactionTable extends PowerGridComponent
@@ -186,4 +187,25 @@ final class TransactionTable extends PowerGridComponent
         ];
     }
     */
+
+    public function destroy()
+    {
+        if (empty($this->checkedValues())) {
+            Toaster::error("Silahkan pilih data");
+            return;
+        }
+
+        $errorMessage = "";
+
+        foreach (Transaction::whereIn("id", $this->checkedValues())->get() as $transaction) {
+            try {
+                $transaction->delete();
+            } catch (\Throwable $th) {
+                $errorMessage .= "Transaksi Id: {$transaction->id}, Number Display: {$transaction->number_display} tidak dapat dihapus \n";
+            }
+        }
+
+        $this->dispatch('$refresh');
+        Toaster::success("Data berhasil di hapus \n {$errorMessage}");
+    }
 }

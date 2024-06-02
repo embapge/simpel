@@ -85,3 +85,26 @@ function getDocument($path)
     $mime = Storage::mimeType($path);
     return response()->file("../storage/app/{$path}", ['content-type' => $mime]);
 }
+
+function ppn()
+{
+    return 11 / 100;
+}
+
+function companyData()
+{
+    return collect(["name" => "Sinar Lautan Maritim", "address" => "Jln. Jalan bersaama", "email" => "billing@simpel.com", "phone_number" => "+(62) 896-2157-3281"]);
+}
+
+function paymentColor($status)
+{
+    if ($status == "pending") {
+        $color = "warning";
+    } elseif ($status == "expire" || $status == "cancel") {
+        $color = "danger";
+    } else {
+        $color = "success";
+    }
+
+    return $color;
+}
