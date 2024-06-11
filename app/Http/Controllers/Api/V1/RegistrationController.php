@@ -45,12 +45,28 @@ class RegistrationController extends Controller
             "transaction_type.uuid" => "Jenis transaksi tidak valid",
             "transaction_sub_type.required" => "Jenis sub transaksi harus diisi",
             "transaction_sub_type.uuid" => "Jenis sub transaksi tidak valid",
+            "contact_email_name.*.required" => "Nama kontak email harus diisi",
+            "contact_email_address.*.required" => "Email harus diisi",
+            "contact_phone_name.*.required" => "Nama kontak telepon harus diisi",
+            "contact_phone_number.*.required" => "Nomor telepon harus diisi",
             "website.active_url" => "Link website tidak aktif",
         ]);
 
         $validator->sometimes("website", "active_url", function () use ($request) {
             return $request->filled("website");
         });
+
+        foreach ($request->contact_email_name as $iContactEmail => $name) {
+            $validator->sometimes("contact_email_name.{$iContactEmail}", ["required"], function () use ($request, $iContactEmail) {
+                return $request->filled("contact_email_address.{$iContactEmail}");
+            });
+        }
+
+        foreach ($request->contact_email_address as $iContactEmail => $name) {
+            $validator->sometimes("contact_email_address.{$iContactEmail}", ["required"], function () use ($request, $iContactEmail) {
+                return $request->filled("contact_email_name.{$iContactEmail}");
+            });
+        }
 
         if ($validator->fails()) {
             return response()->json(
@@ -59,16 +75,7 @@ class RegistrationController extends Controller
             );
         }
 
-        // name: 'sadasdsadsa',
-        // pic_name: 'Barata',
-        // email: 'barata@gmail.com',
-        // phone_number: '089643418173',
-        // website: '',
-        // address: 'kp',
-        // transaction_type: '9bfbed38-7459-43f5-8d49-c6291b8efeb4',
-        // transaction_sub_type: '9bfbed38-7643-431f-b98c-d25e6c1011bd'
-
-        $Verification = Verification::create([
+        $verification = Verification::create([
             "transaction_sub_type_id" => $request->transaction_sub_type,
             "name" => $request->name,
             "pic_name" => $request->pic_name,
@@ -78,9 +85,30 @@ class RegistrationController extends Controller
             "website" => $request->website,
         ]);
 
+        foreach ($request->contact_email_address as $iEmail => $email) {
+            if (!$request->filled("contact_email_name.{$iEmail}") && !$request->filled("contact_email_address.{$iEmail}")) {
+                continue;
+            }
+
+            $verification->emails()->create([
+                "name" => $request->contact_email_name[$iEmail],
+                "address" => $request->contact_email_address[$iEmail],
+            ]);
+        }
+
+        foreach ($request->contact_phone_number as $iEmail => $email) {
+            if (!$request->filled("contact_phone_name.{$iEmail}") && !$request->filled("contact_phone_number.{$iEmail}")) {
+                continue;
+            }
+
+            $verification->emails()->create([
+                "name" => $request->contact_phone_name[$iEmail],
+                "address" => $request->contact_phone_number[$iEmail],
+            ]);
+        }
+
         return response()->json([
             "message" => "Data berhasil ditambahkan",
-            "data" => $request->all()
         ], 200);
     }
 
