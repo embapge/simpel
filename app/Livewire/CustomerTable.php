@@ -66,7 +66,7 @@ final class CustomerTable extends PowerGridComponent
 
     public function datasource(): Builder
     {
-        return Customer::with(["emails", "phones"])->select("customers.*");
+        return Customer::with(["emails", "phones", "transactions:id,customer_id,total_payment"])->select("customers.*");
     }
 
     public function relationSearch(): array
@@ -175,31 +175,25 @@ final class CustomerTable extends PowerGridComponent
     public function actions(Customer $row): array
     {
         return [
-            Button::add('custom')
-                ->render(function () use ($row) {
-                    return Blade::render(<<<HTML
-                        <div wire:key="$row->id" wire:ignore>
-                            <button type="button" class="badge badge-center bg-warning rounded-pill" wire:click="show('$row->id')"><span class="tf-icons bx bx-pencil"></span></button>
-                        </div>
-                        HTML);
-                }),
-            // Button::add('edit')
-            //     ->slot('<span class="tf-icons bx bx-pencil"></span>')
-            //     ->class('badge badge-center bg-warning rounded-pill')
-            //     ->dispatch('customer-show', ['customer' => $row->id]),
+            Button::add('customer-show')
+                ->slot("<i class='bx bx-pencil'></i>") // Display
+                ->id()
+                ->class('badge badge-center bg-warning rounded-pill')
+                ->dispatch('customer-show', ['customer' => $row->id]),
+
+            Button::add('customer-user-access')
+                ->slot("<i class='bx bx-user'></i>") // Display
+                ->id("customer-user")
+                ->class('badge badge-center bg-info rounded-pill')
+                ->dispatch('customer-user-access', ['customer' => $row->id]),
         ];
     }
 
     public function actionRules($row): array
     {
         return [
-            // Rule::button('edit')->setAttribute("type", "button")->setAttribute('wire:ignore.self wire:ignore'),
+            Rule::button('customer-user-access')->when(fn ($row) => $row->transactions->pluck("total_payment")->sum() <= 0)->hide(),
         ];
-    }
-
-    public function show($customer)
-    {
-        $this->dispatch('customer-show', ['customer' => $customer]);
     }
 
     public function destroy()
