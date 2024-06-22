@@ -50,7 +50,7 @@ class TransactionDocumentForm extends Form
 
     public function store()
     {
-        $this->transaction->refresh();
+        $this->transaction->fresh();
         if ($this->transaction->documents->where("id", $this->document_id)->isEmpty()) {
             $this->transaction->documents()->attach($this->document_id);
             $this->document = Document::find($this->document_id);
@@ -85,9 +85,9 @@ class TransactionDocumentForm extends Form
 
     public function upload()
     {
-        $this->fill([
-            "file" => $this->file,
-        ]);
+        // $this->fill([
+        //     "file" => $this->file,
+        // ]);
 
         if ($this->file) {
             $transactionDirectory = "private/transactions/{$this->transaction->id}";

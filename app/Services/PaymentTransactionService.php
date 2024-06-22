@@ -20,7 +20,7 @@ class PaymentTransactionService
 
     public function setPaymentTransaction(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->refresh();
+        $paymentTransaction->fresh();
         $this->paymentTransaction = $paymentTransaction;
         return $this;
     }
@@ -75,7 +75,7 @@ class PaymentTransactionService
             "response" => json_encode($response)
         ]);
 
-        $payment->refresh();
+        $payment->fresh();
 
         MidtransTransactionStatusEvent::dispatch($payment);
         return $payment->transaction;
@@ -102,6 +102,8 @@ class PaymentTransactionService
                 (new BCAService(Payment::find($response["order_id"])))->createResponseTransaction($response);
             }
         }
+
+        $payment->invoice->calculate();
 
         MidtransTransactionStatusEvent::dispatch($payment);
     }

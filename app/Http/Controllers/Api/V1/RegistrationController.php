@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Events\CustomerRegistratedEvent;
 use App\Http\Controllers\Controller;
+use App\Mail\VerificationLinkUploadMail;
 use App\Models\Customer;
+use App\Models\TransactionSubType;
+use App\Models\User;
 use App\Models\Verification;
+use App\Notifications\UserRegistratedNotification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Spatie\UrlSigner\Laravel\Facades\UrlSigner;
+use Illuminate\Support\Facades\Notification;
 
 class RegistrationController extends Controller
 {
@@ -27,7 +38,7 @@ class RegistrationController extends Controller
         $validator = Validator::make($request->all(), [
             "name" => "required",
             "pic_name" => "required",
-            "email" => "required|email:rfc,dns",
+            "email" => "required|unique:verifications,email|email:rfc,dns",
             "phone_number" => "required|digits_between:10,13|unique:verifications,phone_number",
             "address" => "required",
             "transaction_type" => "required|uuid",
@@ -37,6 +48,7 @@ class RegistrationController extends Controller
             "pic_name.required" => "Nama PIC harus diisi",
             "email.required" => "Email harus diisi",
             "email.email" => "Alamat email tidak valid",
+            "email.unique" => "Email sudah terdaftar",
             "phone_number.required" => "Nomor telepon harus diisi",
             "phone_number.digits_between" => "Nomor telepon minimal :min maksimal :max",
             "phone_number.unique" => "Nomor telepon sudah terdaftar",
@@ -96,19 +108,36 @@ class RegistrationController extends Controller
             ]);
         }
 
-        foreach ($request->contact_phone_number as $iEmail => $email) {
-            if (!$request->filled("contact_phone_name.{$iEmail}") && !$request->filled("contact_phone_number.{$iEmail}")) {
+        foreach ($request->contact_phone_number as $iPhone => $phone) {
+            if (!$request->filled("contact_phone_name.{$iPhone}") && !$request->filled("contact_phone_number.{$iPhone}")) {
                 continue;
             }
 
-            $verification->emails()->create([
-                "name" => $request->contact_phone_name[$iEmail],
-                "address" => $request->contact_phone_number[$iEmail],
+            $verification->phones()->create([
+                "name" => $request->contact_phone_name[$iPhone],
+                "number" => $request->contact_phone_number[$iPhone],
             ]);
         }
 
+        foreach (TransactionSubType::where("id", $verification->transaction_sub_type_id)->with(["documentTemplates"])->first()->documentTemplates as $document) {
+            $verification->documents()->create([
+                "document_id" => $document->id
+            ]);
+        }
+
+        $url = UrlSigner::sign("http://localhost:3000/registration/{$verification->id}/upload");
+
+        $verification->update([
+            "link" => $url
+        ]);
+
+        $verification->fresh();
+
+        CustomerRegistratedEvent::dispatch($verification, $verification->link, "Mohon untuk mengisi dokumen-dokumen yang harus dipenuhi.");
+        Notification::send(User::where("role", "admin")->get(), new UserRegistratedNotification($verification));
+
         return response()->json([
-            "message" => "Data berhasil ditambahkan",
+            "message" => "Terimakasih telah menggunakan jasa PT. Sinar Lautan Maritim. Mohon untuk memeriksa email untuk lanjut ketahapan berikutnya",
         ], 200);
     }
 
@@ -134,5 +163,98 @@ class RegistrationController extends Controller
     public function destroy(Customer $customer)
     {
         //
+    }
+
+    public function verification(Request $request)
+    {
+        // $valid = UrlSigner::validate("http://localhost:3000/registration/{$request->verification}/upload?expires={$request->expires}&signature={$request->signature}");
+
+        // if (!$valid) {
+        //     return response()->json([
+        //         "message" => "Link tidak valid"
+        //     ], 401);
+        // }
+
+        $verification = Verification::select("id", "transaction_sub_type_id", "name", "pic_name", "email", "phone_number", "website", "address", "status")->with(["emails:id,verification_id,name,address", "phones:id,verification_id,number,name", "documents" => function ($q) {
+            $q->select(["id", "verification_id", "date", "file", "document_id"]);
+            $q->whereNull("date");
+            $q->whereNull("file");
+            $q->with("document", function ($q) {
+                $q->select("id", "name");
+            });
+        }, "subType:id,transaction_type_id,name,description" => ["transactionType:id,name"]])->where("id", $request->verification)->whereIn("status", ["verifications", "upload_file"])->first();
+
+        if (!$verification) {
+            return response()->json([
+                "message" => "Data tidak ditemukan"
+            ], 404);
+        } elseif ($verification->status == "verifications") {
+            return response()->json([
+                "message" => "Terima kasih telah mengupload dokumen, mohon menunggu proses pengurusan dokumen."
+            ], 201);
+        }
+
+        return response()->json([
+            "data" => $verification,
+            "file" => $verification->documents,
+            "message" => "Silahkan upload file"
+        ], 200);
+    }
+
+    public function upload(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            "document_id.*" => ["required"],
+            "files.*" => ["required", "mimes:png,jpg,pdf,xls,xlsx,csv"]
+        ], ["files.*.mimes" => "Jenis file tidak sesuai"]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                $validator->errors(),
+                403
+            );
+        }
+
+        try {
+            $verification = Verification::where("id", $request->verification_id)->with(["documents"])->first();
+
+            foreach ($request->document_id as $iDoc => $documentId) {
+                if ($request->has("files.{$iDoc}")) {
+                    $verificationDocument = $verification->documents->where("document_id", $documentId)->first();
+
+                    if ($verificationDocument) {
+                        $verificationDirectory = "private/verifications/{$verification->id}";
+                        if (!Storage::exists($verificationDirectory)) {
+                            Storage::makeDirectory($verificationDirectory); //creates directory
+                        }
+
+                        $documentDirectory = $verificationDirectory . "/documents";
+
+                        if (!Storage::exists($documentDirectory)) {
+                            Storage::makeDirectory($documentDirectory); //creates directory
+                        }
+
+                        if ($verificationDocument->file) {
+                            Storage::delete($verification->documents->where("document_id", $documentId)->first()->file);
+                        }
+
+                        $path = Storage::putFile($documentDirectory, $request->file("files.{$iDoc}"), "private");
+
+                        $verificationDocument->update([
+                            "date" => Carbon::now(),
+                            "file" => $path,
+                        ]);
+                    }
+
+                    $verification->update([
+                        "status" => "verifications"
+                    ]);
+                }
+            }
+        } catch (\Throwable $th) {
+            return response()->json(["message" => $th->getMessage()]);
+        }
+
+        return response()->json(["message" => "Terima kasih telah mempercayakan pengurusan dokumen kapal kepada PT. Sinar Lautan Maritim. Mohon menunggu untuk proses selanjutnya. Terima kasih."]);
     }
 }

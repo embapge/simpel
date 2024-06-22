@@ -56,7 +56,7 @@ class TransactionForm extends Form
 
     public function setTransaction(Transaction $transaction)
     {
-        $transaction->refresh();
+        $transaction->fresh();
         $this->transaction = $transaction;
         $this->fill([
             "id" => $transaction->id,
@@ -93,7 +93,13 @@ class TransactionForm extends Form
     public function calculate()
     {
         $this->transaction->calculate();
-        $this->total = $this->transaction->total;
+
+        $this->fill([
+            "total" => $this->transaction->total,
+            "total_bill" => $this->transaction->total_bill,
+            "total_payment" => $this->transaction->total_payment,
+            "excess_payment" => $this->transaction->excess_payment,
+        ]);
     }
 
     public function resetCustom()

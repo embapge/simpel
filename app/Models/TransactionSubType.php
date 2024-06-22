@@ -23,7 +23,7 @@ class TransactionSubType extends Model
 
     public function transactionType()
     {
-        return $this->belongsTo(TransactionType::class, "transaction_sub_type_id");
+        return $this->belongsTo(TransactionType::class, "transaction_type_id", "id");
     }
 
     public function documentTemplates()

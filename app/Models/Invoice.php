@@ -63,7 +63,9 @@ class Invoice extends Model
         $tax = $this->is_tax ? $subtotal * ppn() : 0;
         $stamp = $this->stamp;
         $total = $subtotal + $tax + $stamp + $this->services->where("type", "afterTax")->pluck("price")->sum();
-        $total_bill = $total - $this->paymentPaids->pluck("amount")->sum();
+        $total_payment = $this->paymentPaids->pluck("amount")->sum();
+        $total_bill = $total - $total_payment >= 0 ? $total - $total_payment : 0;
+        $excess_payment = $total - $total_payment < 0 ? abs($total - $total_payment) : 0;
 
         $this->update([
             "subtotal" => $subtotal,
@@ -71,6 +73,8 @@ class Invoice extends Model
             "stamp" => $stamp,
             "total" => $total,
             "total_bill" => $total_bill,
+            "total_payment" => $total_payment,
+            "excess_payment" => $excess_payment,
         ]);
     }
 

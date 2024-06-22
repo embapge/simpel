@@ -85,11 +85,17 @@
                 <div data-i18n="Document">Document</div>
             </a>
         </li>
+        <li class="menu-item {{ request()->is('user*') ? 'active' : '' }}">
+            <a href="{{ route('user') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-user"></i>
+                <div data-i18n="User">User</div>
+            </a>
+        </li>
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Verification</span>
         </li>
         <li class="menu-item {{ request()->is('verification*') ? 'active' : '' }}">
-            <a href="{{ route('transaction') }}" class="menu-link">
+            <a href="{{ route('verification') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-check-double"></i>
                 <div data-i18n="Verification">Verification</div>
             </a>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d8eb5ab06762a7adde353e3ad56decb",
+    "content-hash": "8fcfd8b82e6f277a8c0bd40fe693c401",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -5566,6 +5566,77 @@
             "time": "2024-03-07T07:35:57+00:00"
         },
         {
+            "name": "spatie/laravel-url-signer",
+            "version": "3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/laravel-url-signer.git",
+                "reference": "59174990f02cc13f449733a139f97a98e551b3e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/laravel-url-signer/zipball/59174990f02cc13f449733a139f97a98e551b3e9",
+                "reference": "59174990f02cc13f449733a139f97a98e551b3e9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.10.0|^11.0",
+                "illuminate/support": "^10.0|^11.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.13.6",
+                "spatie/url-signer": "^2.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0",
+                "pestphp/pest": "^1.22.2|^1.22|^2.34"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Spatie\\UrlSigner\\Laravel\\UrlSignerServiceProvider"
+                    ],
+                    "aliases": {
+                        "UrlSigner": "Spatie\\UrlSigner\\Laravel\\Facades\\UrlSigner"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\UrlSigner\\Laravel\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel implementation of spatie/signed-url",
+            "homepage": "https://github.com/spatie/laravel-url-signer",
+            "keywords": [
+                "laravel-url-signer",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/laravel-url-signer/issues",
+                "source": "https://github.com/spatie/laravel-url-signer/tree/3.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-05-14T11:37:01+00:00"
+        },
+        {
             "name": "spatie/laravel-webhook-client",
             "version": "3.3.2",
             "source": {
@@ -5640,6 +5711,71 @@
                 }
             ],
             "time": "2024-04-25T14:09:05+00:00"
+        },
+        {
+            "name": "spatie/url-signer",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/url-signer.git",
+                "reference": "991ee9e2c266181696b1aa1120583cc38dfb42a5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/url-signer/zipball/991ee9e2c266181696b1aa1120583cc38dfb42a5",
+                "reference": "991ee9e2c266181696b1aa1120583cc38dfb42a5",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "pestphp/pest": "^2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\UrlSigner\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://github.com/freekmurze",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://github.com/sebastiandedeyne",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Generate a url with an expiration date and signature to prevent unauthorized access",
+            "homepage": "https://github.com/spatie/url-signer",
+            "keywords": [
+                "encryption",
+                "security",
+                "sign",
+                "spatie",
+                "url"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/url-signer/issues",
+                "source": "https://github.com/spatie/url-signer/tree/2.1.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-12-06T11:03:28+00:00"
         },
         {
             "name": "symfony/clock",

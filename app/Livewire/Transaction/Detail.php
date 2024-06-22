@@ -56,7 +56,7 @@ class Detail extends Component
             return (new TransactionDocumentForm($this, "transactionDocuments." . $idx))->setTransactionDocument($transaction, $document);
         }) : collect([]);
         $this->subType->setSubType($this->transaction->subType);
-        $this->form->calculate();
+        // $this->form->calculate();
         $this->checkGenerateable();
         $this->documents = collect([]);
         $this->documentsModel = Document::whereNotIn("id", $this->transactionDocuments->pluck("document.id"))->get();
@@ -191,7 +191,7 @@ class Detail extends Component
         foreach ($this->documents as $document) {
             $document->validate();
             if ($document->store()) {
-                $this->transaction->refresh();
+                $this->transaction->fresh();
                 $this->transactionDocuments->push($document);
             }
         }

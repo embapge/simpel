@@ -105,11 +105,11 @@ final class InvoiceTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Total', 'total')
+            Column::make('Tax', 'tax')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Total bill', 'total_bill')
+            Column::make('Stamp', 'stamp')
                 ->sortable()
                 ->searchable(),
 
@@ -121,11 +121,11 @@ final class InvoiceTable extends PowerGridComponent
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Tax', 'tax')
+            Column::make('Total', 'total')
                 ->sortable()
                 ->searchable(),
 
-            Column::make('Stamp', 'stamp')
+            Column::make('Total bill', 'total_bill')
                 ->sortable()
                 ->searchable(),
 

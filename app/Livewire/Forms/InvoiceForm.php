@@ -121,7 +121,7 @@ class InvoiceForm extends Form
     public function calculate()
     {
         $this->invoice->calculate();
-        $this->invoice->refresh();
+        $this->invoice->fresh();
         $this->setInvoice($this->invoice);
     }
 }

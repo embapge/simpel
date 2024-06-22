@@ -3,8 +3,9 @@
 use App\Http\Controllers\DocumentController;
 use App\Livewire\Invoice\Detail as InvoiceDetail;
 use App\Livewire\Invoice\Index as Invoice;
+use App\Livewire\Verification\Index as Verification;
 use App\Livewire\Transaction\Detail as TransactionDetail;
-use App\Mail\TestMail;
+use App\Livewire\User\Index as User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,14 @@ Route::middleware([
         })->name("invoice.print");
     });
 
+    Route::prefix('verification')->group(function () {
+        Route::get("/", Verification::class)->name("verification");
+    });
+
+    Route::prefix('user')->group(function () {
+        Route::get("/", User::class)->name("user");
+    });
+
     Route::controller(DocumentController::class)->group(function () {
         Route::prefix("document")->group(function () {
             Route::name("document.")->group(function () {
@@ -55,9 +64,4 @@ Route::middleware([
             });
         });
     });
-
-    // Route::get("test/mailable", function () {
-    //     Mail::to("barata@ciptamedianusa.net")->send(new TestMail());
-    //     dd("masuk");
-    // });
 });

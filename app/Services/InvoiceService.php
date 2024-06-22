@@ -51,7 +51,7 @@ class InvoiceService
         $this->invoice->update([
             "type" => InvoiceType::INV
         ]);
-        $this->invoice->refresh();
+        $this->invoice->fresh();
         $number = $this->getNullNumber($date);
         if (!$number) {
             $number = $this->getNumber($date);
@@ -68,7 +68,7 @@ class InvoiceService
 
     public function getNumberDisplay($number)
     {
-        $this->invoice->refresh();
+        $this->invoice->fresh();
 
         $display = "UNDFND";
         if ($this->invoice->type == InvoiceType::PRO->value) {
