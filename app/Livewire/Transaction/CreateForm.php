@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Transaction;
 
+use App\Enums\TransactionHistoriesStatus;
 use App\Livewire\Forms\CustomerForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
+use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Models\Customer;
 use App\Models\TransactionDocument;
 use App\Models\TransactionDocumentTemplate;
@@ -62,6 +64,7 @@ class CreateForm extends Component
 
         $transaction = $this->form->store();
         $this->transactionDocuments = collect($this->transactionDocumentTemplate)->pluck("documents")->collapse()->whereIn("id", $this->documents)->map(fn ($document) => (new TransactionDocumentForm($this, "transactionDocument"))->setTransactionDocument($transaction, $document)->store());
+        (new TransactionHistoriesForm($this, "transactionHistories"))->store($transaction, TransactionHistoriesStatus::PROGRESS, "Admin memproses transaksi");
 
         // Reset
         $this->customer->resetCustom();

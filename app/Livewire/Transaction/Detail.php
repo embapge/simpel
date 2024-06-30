@@ -8,6 +8,7 @@ use App\Livewire\Forms\DocumentForm;
 use App\Livewire\Forms\InvoiceForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
+use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Livewire\Forms\TransactionServiceForm;
 use App\Livewire\Forms\TransactionSubTypeForm;
 use App\Models\Document;
@@ -35,15 +36,18 @@ class Detail extends Component
     public $documentsModel = [];
     public Collection $transactionServices;
     public Collection $transactionDocuments;
+    public Collection $transactionHistories;
     public $number_display = "";
     public $parentCheckbox = false;
     public $services;
     public $checkedServices = [];
     public $checkedDocument = [];
+    public $checkedHistories = [];
     public $editService = false;
     public $editDocument = false;
     public $editDetailDocument = false;
     public $editTransaction = false;
+    public $editHistories = false;
     public $generateable;
 
     public function mount(Transaction $transaction)
@@ -54,6 +58,9 @@ class Detail extends Component
         $this->transactionServices = $transaction->services->isNotEmpty() ? $transaction->services->map(fn ($service, $idx) => (new TransactionServiceForm($this, "transactionService"))->setService($service)) : collect([]);
         $this->transactionDocuments = $transaction->documents->isNotEmpty() ? $transaction->documents->map(function ($document, $idx) use ($transaction) {
             return (new TransactionDocumentForm($this, "transactionDocuments." . $idx))->setTransactionDocument($transaction, $document);
+        }) : collect([]);
+        $this->transactionHistories = $transaction->histories->isNotEmpty() ? $transaction->histories->map(function ($history, $idx) use ($transaction) {
+            return (new TransactionHistoriesForm($this, "transactionHistories." . $idx))->setHistory($history);
         }) : collect([]);
         $this->subType->setSubType($this->transaction->subType);
         $this->form->calculate();
@@ -233,6 +240,12 @@ class Detail extends Component
     public function editTransactionMode()
     {
         $this->editTransaction = !$this->editTransaction;
+    }
+
+    public function editHistoryMode()
+    {
+        $this->reset("checkedHistories");
+        $this->editHistories = !$this->editHistories;
     }
     // End Edit Mode
 

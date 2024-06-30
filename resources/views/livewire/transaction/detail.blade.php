@@ -547,20 +547,22 @@
                                 <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
                                     <div class="row text-sm">
                                         <div class="col p-0">
-                                            <div class="list-group">
-                                                <a href="javascript:void(0);"
-                                                    class="list-group-item list-group-item-action flex-column align-items-start">
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <h6 class="mb-0">saadhasd-asdasdasdsad-asdasdasaas</h6>
-                                                        <small class="text-muted">Rp. 3.350.000</small>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <small>03 Januari 2024</small>
-                                                        <small class="text-muted">Rp. 450.000</small>
-                                                    </div>
-                                                    <small class="text-muted">Donec id elit non mi porta.</small>
-                                                </a>
-                                            </div>
+                                            @foreach ($transactionHistories as $history)
+                                                <div class="list-group">
+                                                    <a href="javascript:void(0);"
+                                                        class="list-group-item list-group-item-action flex-column align-items-start">
+                                                        <div class="d-flex justify-content-between w-100">
+                                                            <div class="d-flex space-x-6">
+                                                                <input type="checkbox" class="form-check-input">
+                                                                <h6 class="mb-0">{{ $history->status }}</h6>
+                                                            </div>
+                                                            <small
+                                                                class="text-muted">{{ \Carbon\Carbon::parse($history->date)->translatedFormat('d F Y') }}</small>
+                                                        </div>
+                                                        <small class="text-muted">{{ $history->description }}</small>
+                                                    </a>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                     <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
