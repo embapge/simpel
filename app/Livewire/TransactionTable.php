@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use PowerComponents\LivewirePowerGrid\Button;
 use PowerComponents\LivewirePowerGrid\Column;
@@ -62,7 +63,13 @@ final class TransactionTable extends PowerGridComponent
 
     public function datasource(): ?Builder
     {
-        return Transaction::query()->join("customers", fn ($customer) => $customer->on("transactions.customer_id", "=", "customers.id"))->select(["transactions.*", "customers.name as customer_name"]);
+        $transaction = Transaction::query()->join("customers", fn ($customer) => $customer->on("transactions.customer_id", "=", "customers.id"))->select(["transactions.*", "customers.name as customer_name"]);
+
+        if (Auth::user()->role == "customer") {
+            $transaction = $transaction->where("customer_id", Auth::user()->customer->first()->id);
+        }
+
+        return $transaction;
     }
 
     public function relationSearch(): array

@@ -43,7 +43,7 @@ class BCAService
             "response" => json_encode($response),
         ]);
 
-        $this->payment->fresh();
+        $this->payment->refresh();
 
         $this->updateTransactionStatus($response["transaction_status"]);
 

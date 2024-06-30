@@ -56,7 +56,7 @@ class TransactionForm extends Form
 
     public function setTransaction(Transaction $transaction)
     {
-        $transaction->fresh();
+        $transaction->refresh();
         $this->transaction = $transaction;
         $this->fill([
             "id" => $transaction->id,
@@ -80,7 +80,6 @@ class TransactionForm extends Form
     {
         $this->validate();
         $transaction = Transaction::create($this->only("customer_id", "transaction_sub_type_id", "internal_note"));
-        // $transaction->documents()->attach($this->documents_id);
         $this->reset();
         return $transaction;
     }
@@ -93,7 +92,7 @@ class TransactionForm extends Form
     public function calculate()
     {
         $this->transaction->calculate();
-
+        $this->transaction->refresh();
         $this->fill([
             "total" => $this->transaction->total,
             "total_bill" => $this->transaction->total_bill,

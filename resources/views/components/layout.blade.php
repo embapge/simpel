@@ -106,7 +106,7 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
                                                     <div class="flex-grow-1">
                                                         <span
                                                             class="fw-semibold d-block">{{ Str::title(Auth::user()->name) }}</span>
-                                                        <small class="text-muted">Admin</small>
+                                                        <small class="text-muted">{{ Str::title(Auth::user()->role) }}</small>
                                                     </div>
                                                 </div>
                                             </a>

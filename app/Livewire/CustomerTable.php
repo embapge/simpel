@@ -192,7 +192,7 @@ final class CustomerTable extends PowerGridComponent
     public function actionRules($row): array
     {
         return [
-            Rule::button('customer-user-access')->when(fn ($row) => $row->transactions->pluck("total_payment")->sum() <= 0)->hide(),
+            Rule::button('customer-user-access')->setAttribute("wire:confirm='Apakah kamu yakin akan membuatkan pelanggan ini hak akses aplikasi?'")->when(fn ($row) => $row->transactions->pluck("total_payment")->sum() <= 0)->hide(),
         ];
     }
 

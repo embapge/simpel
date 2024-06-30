@@ -191,7 +191,7 @@ class Detail extends Component
         foreach ($this->documents as $document) {
             $document->validate();
             if ($document->store()) {
-                $this->transaction->fresh();
+                $this->transaction->refresh();
                 $this->transactionDocuments->push($document);
             }
         }

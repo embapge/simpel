@@ -19,7 +19,8 @@
                                             @if ($form->number_display == 'DRAFT')
                                                 <button type="button"
                                                     class="badge badge-center rounded-pill bg-label-primary"><i
-                                                        class="bx bx-refresh" wire:click='generateNumber'></i></button>
+                                                        class="bx bx-refresh" wire:click='generateNumber'
+                                                        wire:confirm="Apakah anda yakin? Jika nomor sudah digenerate maka"></i></button>
                                             @endif
                                         @endif
                                         {{-- <input type="text"
@@ -28,23 +29,25 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6 text-end">
-                                    @if ($editTransaction)
-                                        <button type="button" class="btn btn-icon btn-outline-success"
-                                            wire:click='saveTransaction'>
-                                            <span class="tf-icons bx bx-save"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bx-x" wire:click='editTransactionMode'></span>
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-icon btn-outline-warning"
-                                            wire:click='editTransactionMode'>
-                                            <span class="tf-icons bx bx-pencil"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-outline-secondary">
-                                            <span class="tf-icons bx bx-printer"></span>
-                                        </button>
-                                    @endif
+                                    @can('admin', App\Models\User::class)
+                                        @if ($editTransaction)
+                                            <button type="button" class="btn btn-icon btn-outline-success"
+                                                wire:click='saveTransaction'>
+                                                <span class="tf-icons bx bx-save"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-outline-danger">
+                                                <span class="tf-icons bx bx-x" wire:click='editTransactionMode'></span>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-icon btn-outline-warning"
+                                                wire:click='editTransactionMode'>
+                                                <span class="tf-icons bx bx-pencil"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-outline-secondary">
+                                                <span class="tf-icons bx bx-printer"></span>
+                                            </button>
+                                        @endif
+                                    @endcan
                                 </div>
                             </div>
                             <div class="row">
@@ -104,22 +107,24 @@
                                             <th colspan="2">Description</th>
                                             <th>Price</th>
                                             <th>
-                                                @if (!$editService)
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-warning"><i
-                                                            class="bx bx-pencil"
-                                                            wire:click='editServiceMode'></i></button>
-                                                @else
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-primary"><i
-                                                            class="bx bx-save" wire:click='saveServices'></i></button>
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-success"><i
-                                                            class="bx bx-plus" wire:click='addService'></i></button>
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-danger"><i
-                                                            class="bx bx-x" wire:click='editServiceMode'></i></button>
-                                                @endif
+                                                @can('admin', App\Models\User::class)
+                                                    @if (!$editService)
+                                                        <button type="button"
+                                                            class="badge badge-center rounded-pill bg-label-warning"><i
+                                                                class="bx bx-pencil"
+                                                                wire:click='editServiceMode'></i></button>
+                                                    @else
+                                                        <button type="button"
+                                                            class="badge badge-center rounded-pill bg-label-primary"><i
+                                                                class="bx bx-save" wire:click='saveServices'></i></button>
+                                                        <button type="button"
+                                                            class="badge badge-center rounded-pill bg-label-success"><i
+                                                                class="bx bx-plus" wire:click='addService'></i></button>
+                                                        <button type="button"
+                                                            class="badge badge-center rounded-pill bg-label-danger"><i
+                                                                class="bx bx-x" wire:click='editServiceMode'></i></button>
+                                                    @endif
+                                                @endcan
                                             </th>
                                         </tr>
                                     </thead>
@@ -209,365 +214,344 @@
                                             @if ($editService)
                                                 <td></td>
                                             @endif
-                                            <td colspan="5"><span
-                                                    class="badge bg-label-danger w-100 p-3"><strong><em>#
-                                                            @terbilang($transaction->total) #</em></strong></span>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <table class="mt-3">
-                                                <tr>
-                                                    <td class="text-enter w-10">Note</td>
-                                                    <td>
-                                                        <textarea rows="1" name="" id=""
-                                                            class="form-control @if ($editTransaction) border-1 @else border-0 @endif"
-                                                            wire:model='form.internal_note' @if (!$editTransaction) readonly @endif></textarea>
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                                            <td colspan="5">
+                                                @can('admin', App\Models\User::class)
+                                                    <span class="badge bg-label-danger w-100 p-3"><strong><em>#
+                                                                @terbilang($transaction->total) #</em></strong></span>
+                                                @elseif($form->number_display === 'DRAFT')
+                                                    <span class="badge bg-label-danger w-100 p-3"><strong><em># Mohon
+                                                                menunggu admin dalam penyesuaian dan silahkan memenuhi
+                                                                dokumen untuk mempercepat proses pengurusan dokumen
+                                                                #</em></strong></span>
+                                                @else
+                                                    <span class="badge bg-label-danger w-100 p-3"><strong><em>#
+                                                                @terbilang($transaction->total) #</em></strong></span>
+                                                    @endif
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <table class="mt-3">
+                                                    <tr>
+                                                        <td class="text-enter w-10">Note</td>
+                                                        <td>
+                                                            <textarea rows="1" name="" id=""
+                                                                class="form-control @if ($editTransaction) border-1 @else border-0 @endif"
+                                                                wire:model='form.internal_note' @if (!$editTransaction) readonly @endif></textarea>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-xl-4">
-                    <div class="row">
-                        <div class="col">
-                            <div class="card overflow-hidden mb-4" style="height: 300px">
-                                <div class="card-header pb-1">
-                                    <div class="row">
-                                        <div class="col-xl-8">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <i class='bx bx-folder bx-md'></i>
-                                                </div>
-                                                <div class="flex-grow-1 row">
-                                                    <div class="col-8 col-sm-7 mb-sm-0 mb-2">
-                                                        <h4 class="mb-0">Documents</h4>
-                                                        <small class="text-muted">Process</small>
+                    <div class="col-xl-4">
+                        <div class="row">
+                            <div class="col">
+                                <div class="card overflow-hidden mb-4" style="height: 300px">
+                                    <div class="card-header pb-1">
+                                        <div class="row">
+                                            <div class="col-xl-8">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class='bx bx-folder bx-md'></i>
+                                                    </div>
+                                                    <div class="flex-grow-1 row">
+                                                        <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                                                            <h4 class="mb-0">Documents</h4>
+                                                            <small class="text-muted">Process</small>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-xl-4 text-end">
-                                            @if (!$editDocument && $transaction->invoices->isEmpty())
-                                                <button type="button" class="btn btn-icon btn-outline-warning"
-                                                    wire:click='editDocumentMode'>
-                                                    <span class="tf-icons bx bx-pencil"></span>
-                                                </button>
-                                            @elseif($editDocument)
-                                                <div wire:loading.remove>
-                                                    <button type="button" class="btn btn-icon btn-outline-primary"
-                                                        wire:click='storeDocument'>
-                                                        <span class="tf-icons bx bx-save"></span>
-                                                    </button>
+                                            <div class="col-xl-4 text-end">
+                                                @if (!$editDocument && $transaction->invoices->isEmpty())
                                                     <button type="button" class="btn btn-icon btn-outline-warning"
                                                         wire:click='editDocumentMode'>
-                                                        <span class="tf-icons bx bx-x"></span>
+                                                        <span class="tf-icons bx bx-pencil"></span>
                                                     </button>
-                                                    <button type="button" class="btn btn-icon btn-outline-danger"
-                                                        wire:click='destroyDocuments'
-                                                        wire:confirm='Apakah anda yakin akan menghapus file?'>
-                                                        <span class="tf-icons bx bx-trash"></span>
-                                                    </button>
-                                                    <button type="button" class="btn btn-icon btn-outline-secondary"
-                                                        wire:click='emptyDocuments'
-                                                        wire:confirm='Apakah anda yakin akan mengkosongkan file?'>
-                                                        <span class="tf-icons bx bx bx-archive-out"></span>
-                                                    </button>
-                                                </div>
-                                                <div wire:loading
-                                                    wire:target="{{ $this->transactionDocuments->map(function ($document, $idx) {
-                                                            return "transactionDocuments.{$idx}.file";
-                                                        })->join(', ,') }}destroyDocuments,editDocumentMode">
-                                                    Loading...</div>
-                                            @endif
-                                        </div>
-                                        <div class="divider p-0 m-0">
-                                            <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                                @elseif($editDocument)
+                                                    <div wire:loading.remove>
+                                                        <button type="button" class="btn btn-icon btn-outline-primary"
+                                                            wire:click='storeDocument'>
+                                                            <span class="tf-icons bx bx-save"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-warning"
+                                                            wire:click='editDocumentMode'>
+                                                            <span class="tf-icons bx bx-x"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-danger"
+                                                            wire:click='destroyDocuments'
+                                                            wire:confirm='Apakah anda yakin akan menghapus file?'>
+                                                            <span class="tf-icons bx bx-trash"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-secondary"
+                                                            wire:click='emptyDocuments'
+                                                            wire:confirm='Apakah anda yakin akan mengkosongkan file?'>
+                                                            <span class="tf-icons bx bx bx-archive-out"></span>
+                                                        </button>
+                                                    </div>
+                                                    <div wire:loading
+                                                        wire:target="{{ $this->transactionDocuments->map(function ($document, $idx) {
+                                                                return "transactionDocuments.{$idx}.file";
+                                                            })->join(', ,') }}destroyDocuments,editDocumentMode">
+                                                        Loading...</div>
+                                                @endif
+                                            </div>
+                                            <div class="divider p-0 m-0">
+                                                <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    {{-- @if ($editDocument)
-                                        <div class="row">
-                                            <div class="col text-end">
-                                                <button type="button"
-                                                    class="badge badge-center rounded-pill bg-label-success"><i
-                                                        class="bx bx-plus"></i></button>
-                                            </div>
-                                        </div>
-                                    @endif
-                                    <div class="row text-sm">
-                                        <div class="col p-0">
-                                            <div class="demo-inline-spacing mt-1 transaction-documents">
-                                                <ul class="list-group">
-                                                    @foreach ($transactionDocuments as $document)
-                                                        <div wire:key="{{ $document->document->id }}">
-                                                            <li
-                                                                class="list-group-item d-flex justify-content-between align-items-center">
-                                                                @if ($editDocument)
-                                                                    <input type="checkbox" class="form-check-input"
-                                                                        value="{{ $document->document->id }}"
-                                                                        wire:model='checkedDocument'>
-                                                                @endif
-                                                                {{ $document->document->name }}
-                                                                <small>{{ $document->date }}</small>
-                                                                <span
-                                                                    class="badge @if ($document->document->date) bg-success
-                                                                @else
-                                                                bg-warning @endif rounded-pill p-1"><i
-                                                                        class="bx @if ($document->document->date) bx-check
-                                                                        @else
-                                                                        bx-loader-circle @endif bx-xs"></i></span>
-                                                            </li>
-                                                        </div>
-                                                    @endforeach
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div> --}}
-                                    <table class="transaction-documents">
-                                        <tr class="align-content-center text-xs">
-                                            <td colspan="3" class="text-end">
-                                                @if (!$editDetailDocument && $transaction->invoices->isEmpty())
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-warning"
-                                                        wire:click="editDetailDocumentMode">
-                                                        <i class="bx bx-pencil"></i>
-                                                    </button>
-                                                @elseif($editDetailDocument)
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-primary"
-                                                        wire:click="saveDetailDocument">
-                                                        <i class="bx bx-save"></i>
-                                                    </button>
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-success"
-                                                        wire:click="addDetailDocument">
-                                                        <i class="bx bx-plus"></i>
-                                                    </button>
-                                                    <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-danger"
-                                                        wire:click="editDetailDocumentMode">
-                                                        <i class="bx bx-x"></i>
-                                                    </button>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @foreach ($transactionDocuments as $iDocument => $document)
-                                            <tr class="align-content-center text-xs" wire:key='{{ $iDocument }}'>
-                                                <td class="w-px-200">
-                                                    @if ($editDocument)
-                                                        <input type="checkbox" class="form-check-input me-1"
-                                                            wire:model='checkedDocument'
-                                                            value="{{ $document->document->id }}">
-                                                    @endif
-                                                    {{ $document->document->name }}
-                                                    <br>
-                                                    <small
-                                                        class="@if ($document->date) text-success @endif ">{{ $document->date ? Carbon\Carbon::parse($document->date)->translatedFormat('d F Y H:i:s') : 'belum lengkap' }}</small>
-                                                </td>
-                                                <td class="text-center">
-                                                    @if ($editDocument)
-                                                        <input type="file"
-                                                            class="form-control form-control-sm w-100"
-                                                            wire:model='transactionDocuments.{{ $iDocument }}.file'
-                                                            id="transactionDocument{{ $iDocument }}file">
-                                                    @elseif ($document->file)
-                                                        <form action="{{ route('document.preview') }}" method="POST"
-                                                            target="__blank">
-                                                            @csrf
-                                                            <input type="hidden" name="path"
-                                                                value="{{ $document->file }}">
-                                                            <button type="submit"
-                                                                class="text-primary">{{ Str::limit(Str::of($document->file)->explode('/')->last(),32) }}</button>
-                                                        </form>
-                                                    @elseif(!$editDocument)
-                                                        Dokumen belum terpenuhi
-                                                    @endif
-                                                </td>
-                                                <td class="text-end w-1">
-                                                    <div class="d-flex">
-                                                        <span
-                                                            class="badge me-1 @if ($document->date) bg-success
-                                                                    @else
-                                                                    bg-warning @endif rounded-pill p-1"><i
-                                                                class="bx @if ($document->date) bx-check
-                                                                            @else
-                                                                            bx-loader-circle @endif bx-xs"></i></span>
-                                                        @if (
-                                                            $editDocument &&
-                                                                $transaction->documents->where('id', $document->document->id)->first()->pivot->file != $document->file)
+                                    <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
+                                        <table class="transaction-documents">
+                                            <tr class="align-content-center text-xs">
+                                                <td colspan="3" class="text-end">
+                                                    @can('admin', App\Models\User::class)
+                                                        @if (!$editDetailDocument && $transaction->invoices->isEmpty())
                                                             <button type="button"
-                                                                class="badge 
-                                                                    bg-danger rounded-pill p-1"
-                                                                wire:click='revertUploadDocument("{{ $document->document->id }}")'><i
-                                                                    class="bx bx-x bx-xs"></i></button>
+                                                                class="badge badge-center rounded-pill bg-label-warning"
+                                                                wire:click="editDetailDocumentMode">
+                                                                <i class="bx bx-pencil"></i>
+                                                            </button>
+                                                        @elseif($editDetailDocument)
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-primary"
+                                                                wire:click="saveDetailDocument">
+                                                                <i class="bx bx-save"></i>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-success"
+                                                                wire:click="addDetailDocument">
+                                                                <i class="bx bx-plus"></i>
+                                                            </button>
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-danger"
+                                                                wire:click="editDetailDocumentMode">
+                                                                <i class="bx bx-x"></i>
+                                                            </button>
                                                         @endif
-                                                    </div>
+                                                    @endcan
                                                 </td>
                                             </tr>
-                                        @endforeach
-                                        @if ($editDetailDocument)
-                                            @foreach ($documents as $iNewDoc => $document)
-                                                <tr class="align-content-center text-xs"
-                                                    wire:key='{{ $iNewDoc }}'>
-                                                    <td class="w-px-200" colspan="2">
-                                                        <x-select2 class="form-select form-select-sm mb-1 select2"
-                                                            :datas='$documentsModel'
-                                                            wire:model="documents.{{ $iNewDoc }}.document_id"
-                                                            name="documents[]"
-                                                            id="documents{{ $iNewDoc }}document_id" />
-                                                        <x-alert-message
-                                                            name="documents.{{ $iNewDoc }}.document_id" />
+                                            @foreach ($transactionDocuments as $iDocument => $document)
+                                                <tr class="align-content-center text-xs" wire:key='{{ $iDocument }}'>
+                                                    <td class="w-px-200">
+                                                        @if ($editDocument)
+                                                            <input type="checkbox" class="form-check-input me-1"
+                                                                wire:model='checkedDocument'
+                                                                value="{{ $document->document->id }}">
+                                                        @endif
+                                                        {{ $document->document->name }}
+                                                        <br>
+                                                        <small
+                                                            class="@if ($document->date) text-success @endif ">{{ $document->date ? Carbon\Carbon::parse($document->date)->translatedFormat('d F Y H:i:s') : 'belum lengkap' }}</small>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        @if ($editDocument)
+                                                            <input type="file"
+                                                                class="form-control form-control-sm w-100"
+                                                                wire:model='transactionDocuments.{{ $iDocument }}.file'
+                                                                id="transactionDocument{{ $iDocument }}file">
+                                                        @elseif ($document->file)
+                                                            <form action="{{ route('document.preview') }}" method="POST"
+                                                                target="__blank">
+                                                                @csrf
+                                                                <input type="hidden" name="path"
+                                                                    value="{{ $document->file }}">
+                                                                <button type="submit"
+                                                                    class="text-primary">{{ Str::limit(Str::of($document->file)->explode('/')->last(),32) }}</button>
+                                                            </form>
+                                                        @elseif(!$editDocument)
+                                                            Dokumen belum terpenuhi
+                                                        @endif
                                                     </td>
                                                     <td class="text-end w-1">
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-danger"
-                                                            wire:click='removeDetailDocument("{{ $iNewDoc }}")'>
-                                                            <i class="bx bx-minus"></i>
-                                                        </button>
+                                                        <div class="d-flex">
+                                                            <span
+                                                                class="badge me-1 @if ($document->date) bg-success
+                                                                    @else
+                                                                    bg-warning @endif rounded-pill p-1"><i
+                                                                    class="bx @if ($document->date) bx-check
+                                                                            @else
+                                                                            bx-loader-circle @endif bx-xs"></i></span>
+                                                            @if (
+                                                                $editDocument &&
+                                                                    $transaction->documents->where('id', $document->document->id)->first()->pivot->file != $document->file)
+                                                                <button type="button"
+                                                                    class="badge 
+                                                                    bg-danger rounded-pill p-1"
+                                                                    wire:click='revertUploadDocument("{{ $document->document->id }}")'><i
+                                                                        class="bx bx-x bx-xs"></i></button>
+                                                            @endif
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
-                                        @endif
-                                    </table>
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            @if ($editDetailDocument)
+                                                @foreach ($documents as $iNewDoc => $document)
+                                                    <tr class="align-content-center text-xs"
+                                                        wire:key='{{ $iNewDoc }}'>
+                                                        <td class="w-px-200" colspan="2">
+                                                            <x-select2 class="form-select form-select-sm mb-1 select2"
+                                                                :datas='$documentsModel'
+                                                                wire:model="documents.{{ $iNewDoc }}.document_id"
+                                                                name="documents[]"
+                                                                id="documents{{ $iNewDoc }}document_id" />
+                                                            <x-alert-message
+                                                                name="documents.{{ $iNewDoc }}.document_id" />
+                                                        </td>
+                                                        <td class="text-end w-1">
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-danger"
+                                                                wire:click='removeDetailDocument("{{ $iNewDoc }}")'>
+                                                                <i class="bx bx-minus"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endif
+                                        </table>
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                                        </div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card overflow-hidden mb-4" style="height: 300px">
-                                <div class="card-header pb-1">
-                                    <div class="row">
-                                        <div class="col-xl-8">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <i class='bx bx-file bx-md'></i>
-                                                </div>
-                                                <div class="flex-grow-1 row">
-                                                    <div class="col-8 col-sm-7 mb-sm-0 mb-2">
-                                                        <h4 class="mb-0">Invoices</h4>
-                                                        <small class="text-muted">Process</small>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card overflow-hidden mb-4" style="height: 300px">
+                                    <div class="card-header pb-1">
+                                        <div class="row">
+                                            <div class="col-xl-8">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class='bx bx-file bx-md'></i>
+                                                    </div>
+                                                    <div class="flex-grow-1 row">
+                                                        <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                                                            <h4 class="mb-0">Invoices</h4>
+                                                            <small class="text-muted">Process</small>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-xl-4 text-end">
+                                                @can('admin', App\Models\User::class)
+                                                    <button type="button" class="btn btn-icon btn-outline-primary"
+                                                        wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
+                                                        wire:click='generateInvoice'
+                                                        @if (!$generateable) disabled @endif>
+                                                        <span class="tf-icons bx bx-refresh"></span>
+                                                    </button>
+                                                @endcan
+                                            </div>
+                                            <div class="divider p-0 m-0">
+                                                <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                            </div>
                                         </div>
-                                        <div class="col-xl-4 text-end">
-                                            <button type="button" class="btn btn-icon btn-outline-primary"
-                                                wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
-                                                wire:click='generateInvoice'
-                                                @if (!$generateable) disabled @endif>
-                                                <span class="tf-icons bx bx-refresh"></span>
-                                            </button>
+                                    </div>
+                                    <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
+                                        @foreach ($transaction->invoices as $invoice)
+                                            <div class="row text-sm mb-3">
+                                                <div class="col p-0">
+                                                    <div class="list-group">
+                                                        <a href="{{ route('invoice.detail', ['invoice' => $invoice->id]) }}"
+                                                            class="list-group-item list-group-item-action flex-column align-items-start"
+                                                            target="__blank">
+                                                            <div class="d-flex justify-content-between w-100">
+                                                                <h6 class="mb-0">
+                                                                    {{ $invoice->number_display ?? $invoice->id }}
+                                                                </h6>
+                                                                <small class="text-muted">@uang($invoice->total)</small>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between w-100">
+                                                                <small>03 Januari 2024</small>
+                                                                <small class="text-muted">Rp. 450.000</small>
+                                                            </div>
+                                                            <small
+                                                                class="text-muted">{{ $invoice->internal_note }}</small>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                                         </div>
-                                        <div class="divider p-0 m-0">
-                                            <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    @foreach ($transaction->invoices as $invoice)
-                                        <div class="row text-sm mb-3">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card overflow-hidden mb-4" style="height: 300px">
+                                    <div class="card-header pb-1">
+                                        <div class="row">
+                                            <div class="col-xl-8">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class='bx bx-file bx-md'></i>
+                                                    </div>
+                                                    <div class="flex-grow-1 row">
+                                                        <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                                                            <h4 class="mb-0">Status</h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 text-end">
+                                                @can('admin', App\Models\User::class)
+                                                    <button type="button" class="btn btn-icon btn-outline-primary"
+                                                        wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
+                                                        wire:click='generateInvoice'
+                                                        @if (!$generateable) disabled @endif>
+                                                        <span class="tf-icons bx bx-refresh"></span>
+                                                    </button>
+                                                @endcan
+                                            </div>
+                                            <div class="divider p-0 m-0">
+                                                <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
+                                        <div class="row text-sm">
                                             <div class="col p-0">
                                                 <div class="list-group">
-                                                    <a href="{{ route('invoice.detail', ['invoice' => $invoice->id]) }}"
-                                                        class="list-group-item list-group-item-action flex-column align-items-start"
-                                                        target="__blank">
+                                                    <a href="javascript:void(0);"
+                                                        class="list-group-item list-group-item-action flex-column align-items-start">
                                                         <div class="d-flex justify-content-between w-100">
-                                                            <h6 class="mb-0">
-                                                                {{ $invoice->number_display ?? $invoice->id }}
-                                                            </h6>
-                                                            <small class="text-muted">@uang($invoice->total)</small>
+                                                            <h6 class="mb-0">saadhasd-asdasdasdsad-asdasdasaas</h6>
+                                                            <small class="text-muted">Rp. 3.350.000</small>
                                                         </div>
                                                         <div class="d-flex justify-content-between w-100">
                                                             <small>03 Januari 2024</small>
                                                             <small class="text-muted">Rp. 450.000</small>
                                                         </div>
-                                                        <small
-                                                            class="text-muted">{{ $invoice->internal_note }}</small>
+                                                        <small class="text-muted">Donec id elit non mi porta.</small>
                                                     </a>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card overflow-hidden mb-4" style="height: 300px">
-                                <div class="card-header pb-1">
-                                    <div class="row">
-                                        <div class="col-xl-8">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <i class='bx bx-file bx-md'></i>
-                                                </div>
-                                                <div class="flex-grow-1 row">
-                                                    <div class="col-8 col-sm-7 mb-sm-0 mb-2">
-                                                        <h4 class="mb-0">Status</h4>
-                                                    </div>
-                                                </div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
                                             </div>
-                                        </div>
-                                        <div class="col-xl-4 text-end">
-                                            <button type="button" class="btn btn-icon btn-outline-primary"
-                                                wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
-                                                wire:click='generateInvoice'
-                                                @if (!$generateable) disabled @endif>
-                                                <span class="tf-icons bx bx-refresh"></span>
-                                            </button>
-                                        </div>
-                                        <div class="divider p-0 m-0">
-                                            <div class="divider-text"><i class='bx bx-search-alt'></i></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    <div class="row text-sm">
-                                        <div class="col p-0">
-                                            <div class="list-group">
-                                                <a href="javascript:void(0);"
-                                                    class="list-group-item list-group-item-action flex-column align-items-start">
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <h6 class="mb-0">saadhasd-asdasdasdsad-asdasdasaas</h6>
-                                                        <small class="text-muted">Rp. 3.350.000</small>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <small>03 Januari 2024</small>
-                                                        <small class="text-muted">Rp. 450.000</small>
-                                                    </div>
-                                                    <small class="text-muted">Donec id elit non mi porta.</small>
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
                                         </div>
                                     </div>
                                 </div>
@@ -578,4 +562,3 @@
             </div>
         </div>
     </div>
-</div>

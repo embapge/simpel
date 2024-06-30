@@ -2,14 +2,17 @@
 
 namespace App\Livewire\Transaction;
 
+use App\Enums\TransactionHistoriesStatus;
 use App\Livewire\Forms\CustomerForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
+use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Models\Customer;
 use App\Models\TransactionDocument;
 use App\Models\TransactionDocumentTemplate;
 use App\Models\TransactionSubType;
 use App\Models\TransactionType;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Masmerise\Toaster\Toaster;
@@ -62,7 +65,7 @@ class CreateForm extends Component
 
         $transaction = $this->form->store();
         $this->transactionDocuments = collect($this->transactionDocumentTemplate)->pluck("documents")->collapse()->whereIn("id", $this->documents)->map(fn ($document) => (new TransactionDocumentForm($this, "transactionDocument"))->setTransactionDocument($transaction, $document)->store());
-
+        (new TransactionHistoriesForm($this, "transactionHistories"))->store($transaction, TransactionHistoriesStatus::PROGRESS, "Admin memproses transaksi");
         // Reset
         $this->customer->resetCustom();
         $this->form->reset();
@@ -77,6 +80,12 @@ class CreateForm extends Component
 
     public function render()
     {
-        return view('livewire.transaction.create-form', ["transactionTypes" => $this->transactionType, "customers" => Customer::all()]);
+        $customer = new Customer();
+        if (Auth::user()->role === "customer") {
+            $customer = $customer->where("id", Auth::user()->customer->first()->id)->get();
+        } else {
+            $customer = $customer->all();
+        }
+        return view('livewire.transaction.create-form', ["transactionTypes" => $this->transactionType, "customers" => $customer]);
     }
 }

@@ -8,6 +8,7 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -25,6 +26,10 @@ class FortifyServiceProvider extends ServiceProvider
         {
             public function toResponse($request)
             {
+                if(Auth::user()->role == "customer")
+                {
+                    return redirect('/transaction');
+                }
                 return redirect('/customer');
             }
         });

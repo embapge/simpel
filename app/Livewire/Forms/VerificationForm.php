@@ -33,7 +33,7 @@ class VerificationForm extends Form
     public function resendLink($message)
     {
         $verification = Verification::find($this->id);
-        $verification->fresh();
+        $verification->refresh();
         $valid = UrlSigner::validate($verification->link);
 
         if (!$valid) {
@@ -45,7 +45,7 @@ class VerificationForm extends Form
             ]);
         }
 
-        $verification->fresh();
+        $verification->refresh();
 
         CustomerRegistratedEvent::dispatch($verification, $verification->link, $message);
 

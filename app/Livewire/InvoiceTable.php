@@ -8,6 +8,7 @@ use App\Models\Invoice;
 use App\Models\Transaction;
 use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Livewire\Attributes\On;
 use Masmerise\Toaster\Toaster;
@@ -53,12 +54,18 @@ final class InvoiceTable extends PowerGridComponent
         ];
     }
 
-    public function datasource(): Builder
+    public function datasource(): ?Builder
     {
-        return Invoice::query();
-        return Invoice::query()
-            ->join("transactions", fn (Transaction $transaction) => $transaction->on("transactions.id", "=", "invoices.transaction_id"))
-            ->select("invoices.*");
+        $invoice = Invoice::with(["transaction"])->select("invoices.*");
+        if (Auth::user()->role === "customer") {
+            $invoice = $invoice->withWhereHas("transaction", function ($q) {
+                $q->withWhereHas("customer", function ($q) {
+                    $q->where("id", Auth::user()->customer->first()->id);
+                });
+            });
+        }
+
+        return $invoice;
     }
 
     public function relationSearch(): array
@@ -69,6 +76,7 @@ final class InvoiceTable extends PowerGridComponent
     public function fields(): PowerGridFields
     {
         return PowerGrid::fields()
+            // ->add('transaction_id', fn (Invoice $invoice) => "<a href='" . route("transaction.detail", ["transaction" => $invoice->transaction_id]) . "'>{$invoice->transaction->number_display}</a>")
             ->add('transaction_id', fn (Invoice $invoice) => "<a href='" . route("transaction.detail", ["transaction" => $invoice->transaction_id]) . "'>{$invoice->transaction->number_display}</a>")
             ->add('number_display', fn (Invoice $invoice) => "<a href='" . route("invoice.detail", ["invoice" => $invoice->id]) . "'>{$invoice->number_display}</a>")
             ->add('type', fn (Invoice $invoice) => InvoiceType::from($invoice->type)->labels())
