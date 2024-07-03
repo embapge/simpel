@@ -58,6 +58,6 @@ class TransactionHistoriesForm extends Form
 
         $this->fill($history);
 
-        return $history;
+        return $this;
     }
 }

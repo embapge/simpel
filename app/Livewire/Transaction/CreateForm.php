@@ -64,7 +64,6 @@ class CreateForm extends Component
 
         $transaction = $this->form->store();
         $this->transactionDocuments = collect($this->transactionDocumentTemplate)->pluck("documents")->collapse()->whereIn("id", $this->documents)->map(fn ($document) => (new TransactionDocumentForm($this, "transactionDocument"))->setTransactionDocument($transaction, $document)->store());
-        (new TransactionHistoriesForm($this, "transactionHistories"))->store($transaction, TransactionHistoriesStatus::PROGRESS, "Admin memproses transaksi");
 
         // Reset
         $this->customer->resetCustom();

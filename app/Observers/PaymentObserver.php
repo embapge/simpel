@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\TransactionHistoriesStatus;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -13,6 +14,10 @@ class PaymentObserver
      */
     public function created(Payment $payment): void
     {
+        $payment->invoice->transaction->histories()->create([
+            "status" => TransactionHistoriesStatus::PROGRESS,
+            "description" => "Menunggu pembayaran pelanggan",
+        ]);
     }
 
     /**
