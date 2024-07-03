@@ -532,12 +532,26 @@
                                             </div>
                                         </div>
                                         <div class="col-xl-4 text-end">
-                                            <button type="button" class="btn btn-icon btn-outline-primary"
-                                                wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
-                                                wire:click='generateInvoice'
-                                                @if (!$generateable) disabled @endif>
-                                                <span class="tf-icons bx bx-refresh"></span>
-                                            </button>
+                                            @if (!$editHistories)
+                                                <button type="button" class="btn btn-icon btn-outline-warning"
+                                                    wire:click='editHistoryMode'>
+                                                    <span class="tf-icons bx bx-pencil"></span>
+                                                </button>
+                                            @else
+                                                <button type="button" class="btn btn-icon btn-outline-success"
+                                                    wire:confirm="Apakah kami yakin histori akan disimpan?"
+                                                    wire:click='storeHistory'>
+                                                    <span class="tf-icons bx bx-save"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-icon btn-outline-primary"
+                                                    wire:click='addHistory'>
+                                                    <span class="tf-icons bx bx-plus"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-icon btn-outline-danger"
+                                                    wire:click='editHistoryMode'>
+                                                    <span class="tf-icons bx bx-x"></span>
+                                                </button>
+                                            @endif
                                         </div>
                                         <div class="divider p-0 m-0">
                                             <div class="divider-text"><i class='bx bx-search-alt'></i></div>
@@ -546,22 +560,51 @@
                                 </div>
                                 <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
                                     <div class="row text-sm">
-                                        <div class="col p-0">
-                                            <div class="list-group">
-                                                <a href="javascript:void(0);"
-                                                    class="list-group-item list-group-item-action flex-column align-items-start">
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <h6 class="mb-0">saadhasd-asdasdasdsad-asdasdasaas</h6>
-                                                        <small class="text-muted">Rp. 3.350.000</small>
-                                                    </div>
-                                                    <div class="d-flex justify-content-between w-100">
-                                                        <small>03 Januari 2024</small>
-                                                        <small class="text-muted">Rp. 450.000</small>
-                                                    </div>
-                                                    <small class="text-muted">Donec id elit non mi porta.</small>
-                                                </a>
-                                            </div>
+                                        <div class="col p-0 mb-3">
+                                            @foreach ($transactionHistories as $history)
+                                                <div class="list-group mb-3">
+                                                    <a href="javascript:void(0);"
+                                                        class="list-group-item list-group-item-action flex-column align-items-start">
+                                                        <div class="d-flex justify-content-between w-100">
+                                                            <div class="d-flex space-x-6">
+                                                                <input type="checkbox" class="form-check-input">
+                                                                <h6 class="mb-0">{{ $history->status }}</h6>
+                                                            </div>
+                                                            <small
+                                                                class="text-muted">{{ \Carbon\Carbon::parse($history->date)->translatedFormat('d F Y h:i:s A') }}</small>
+                                                        </div>
+                                                        <small class="text-muted">{{ $history->description }}</small>
+                                                    </a>
+                                                </div>
+                                            @endforeach
                                         </div>
+                                        @foreach ($histories as $iHistory => $history)
+                                            <div class="row">
+                                                <div class="col-xl-5 mb-3">
+                                                    <label for="" class="form-label">Status</label>
+                                                    <select class="form-select"
+                                                        wire:model="histories.{{ $iHistory }}.status">
+                                                        <option value="">Pilih..</option>
+                                                        @foreach (App\Enums\TransactionHistoriesStatus::toArray() as $historyStatus)
+                                                            <option value="{{ $historyStatus['id'] }}">
+                                                                {{ $historyStatus['name'] }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-xl-6 col-11 mb-3">
+                                                    <label for="" class="form-label">Description</label>
+                                                    <textarea wire:model="histories.{{ $iHistory }}.description" rows="2" class="form-control"></textarea>
+                                                </div>
+                                                <div class="col-1">
+                                                    <button
+                                                        class="badge badge-center rounded-pill bg-label-danger mt-5"
+                                                        wire:click="removeHistory({{ $iHistory }})">
+                                                        <span class="bx bx-minus"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
                                     </div>
                                     <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
                                         <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>

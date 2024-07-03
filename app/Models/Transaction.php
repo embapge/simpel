@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Casts\NumberDisplayCast;
 use App\Casts\StatusCast;
 use App\Casts\UangCast;
+use App\Observers\TransactionObserver;
 use Database\Factories\TransactionFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +15,7 @@ use RichanFongdasen\EloquentBlameable\BlameableTrait;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+#[ObservedBy([TransactionObserver::class])]
 class Transaction extends Model
 {
     use HasFactory, HasUuids, BlameableTrait;

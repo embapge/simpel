@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Transaction;
 
+use App\Enums\TransactionHistoriesStatus;
 use App\Http\Resources\TransactionPackage;
 use App\Livewire\Forms\CustomerForm;
 use App\Livewire\Forms\DocumentForm;
 use App\Livewire\Forms\InvoiceForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
+use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Livewire\Forms\TransactionServiceForm;
 use App\Livewire\Forms\TransactionSubTypeForm;
 use App\Models\Document;
@@ -32,18 +34,22 @@ class Detail extends Component
     public CustomerForm $customer;
     public Collection $documents;
     public InvoiceForm $invoice;
+    public Collection $histories;
     public $documentsModel = [];
     public Collection $transactionServices;
     public Collection $transactionDocuments;
+    public Collection $transactionHistories;
     public $number_display = "";
     public $parentCheckbox = false;
     public $services;
     public $checkedServices = [];
     public $checkedDocument = [];
+    public $checkedHistories = [];
     public $editService = false;
     public $editDocument = false;
     public $editDetailDocument = false;
     public $editTransaction = false;
+    public $editHistories = false;
     public $generateable;
 
     public function mount(Transaction $transaction)
@@ -55,10 +61,14 @@ class Detail extends Component
         $this->transactionDocuments = $transaction->documents->isNotEmpty() ? $transaction->documents->map(function ($document, $idx) use ($transaction) {
             return (new TransactionDocumentForm($this, "transactionDocuments." . $idx))->setTransactionDocument($transaction, $document);
         }) : collect([]);
+        $this->transactionHistories = $transaction->histories->isNotEmpty() ? $transaction->histories->map(function ($history, $idx) use ($transaction) {
+            return (new TransactionHistoriesForm($this, "transactionHistories." . $idx))->setHistory($history);
+        }) : collect([]);
         $this->subType->setSubType($this->transaction->subType);
         // $this->form->calculate();
         $this->checkGenerateable();
         $this->documents = collect([]);
+        $this->histories = collect([]);
         $this->documentsModel = Document::whereNotIn("id", $this->transactionDocuments->pluck("document.id"))->get();
     }
 
@@ -209,7 +219,33 @@ class Detail extends Component
         $this->dispatch("document-updated");
     }
     // End Detail Document
+
     // End Document
+
+    // Histories
+    public function addHistory()
+    {
+        $this->histories->push(["status" => "", "description" => ""]);
+    }
+
+    public function removeHistory($idx)
+    {
+        $this->histories->pull($idx);
+        $this->histories->values();
+        Toaster::success("Data berhasil dihapus");
+    }
+
+    public function storeHistory()
+    {
+        foreach ($this->histories as $iHistory => $history) {
+            $this->transactionHistories->push((new TransactionHistoriesForm($this, "transactionHistories." . $this->transactionHistories->keys()->last() ?? 0))->store($this->transaction, TransactionHistoriesStatus::from($history["status"]), $history["description"]));
+        }
+
+        $this->histories = collect([]);
+        $this->editHistories = false;
+        Toaster::success("History transaksi berhasil ditambahkan");
+    }
+    // End Histories
 
     // Edit Mode
     public function editServiceMode()
@@ -233,6 +269,12 @@ class Detail extends Component
     public function editTransactionMode()
     {
         $this->editTransaction = !$this->editTransaction;
+    }
+
+    public function editHistoryMode()
+    {
+        $this->histories = collect([]);
+        $this->editHistories = !$this->editHistories;
     }
     // End Edit Mode
 

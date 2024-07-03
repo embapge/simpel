@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Transaction;
 
+use App\Enums\TransactionHistoriesStatus;
 use App\Livewire\Forms\CustomerForm;
 use App\Livewire\Forms\TransactionDocumentForm;
 use App\Livewire\Forms\TransactionForm;
+use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Models\Customer;
 use App\Models\TransactionDocument;
 use App\Models\TransactionDocumentTemplate;
