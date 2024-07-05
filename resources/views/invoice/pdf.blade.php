@@ -272,7 +272,8 @@
                 <tr>
                     <td class="align-top"><strong>BILLED TO:</strong> <br> {{ $invoice->customer_name }} <br>
                         {{ $invoice->customer_phone_number }} <br>
-                        {{ $invoice->customer_email }}</td>
+                        {{ $invoice->customer_email }} <br>
+                    {{ $invoice->customer_address }}</td>
                     <td class="align-top">
                         @if ($response['transaction_status'] == 'settlement' || $response['transaction_status'] == 'pending')
                             <strong>BANK TYPE:</strong> {{ Str::upper($response['va_numbers'][0]['bank']) }}
@@ -330,18 +331,10 @@
                 <tr>
                     <td></td>
                     <td><strong>Total</strong></td>
-                    <td class="text-center"><strong>@uang($invoice->total_bill)</strong></td>
+                    <td class="text-center"><strong>@uang($invoice->total)</strong></td>
                 </tr>
             </tfoot>
         </table>
-
-        {{-- "payment_id" => $transaction->payment->id,
-        "bank" => $response["va_numbers"][0]["bank"] ?? null,
-        "va_number" => $response["va_numbers"][0]["va_number"] ?? null,
-        "expiry_time" => $response["expiry_time"] ?? null,
-        "transaction_time" => $response["transaction_time"] ?? null,
-        "status" => $response["transaction_status"] ?? null,
-        "settlement_time" => $response["transaction_status"] == "settlement" ? $response["settlement_time"] : null, --}}
 
         @if ($response['transaction_status'] == 'settlement')
             <table class="table text-center">

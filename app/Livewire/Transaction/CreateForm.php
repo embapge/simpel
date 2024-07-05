@@ -12,6 +12,7 @@ use App\Models\TransactionDocument;
 use App\Models\TransactionDocumentTemplate;
 use App\Models\TransactionSubType;
 use App\Models\TransactionType;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Masmerise\Toaster\Toaster;
@@ -21,21 +22,17 @@ class CreateForm extends Component
     public TransactionForm $form;
     public CustomerForm $customer;
     public $transactionType = [];
-    public $transactionDocumentTemplate = [];
+    public Collection $transactionDocumentTemplate;
     public $transactionDocuments = [];
     public $documents = [];
 
     public function mount()
     {
-        $this->transactionType = TransactionType::with(["subTypes"])->get()->toArray();
+        $this->transactionType = TransactionType::with(["subTypes"])->get();
     }
 
     public function changeDocument()
     {
-        // $documentTemplates = TransactionDocumentTemplate::withWhereHas("subTypes", function ($q) {
-        //     $q->where("transaction_document_template_details.transaction_sub_type_id", $this->form->transaction_sub_type_id);
-        // })->with(["documents"])->get();
-
         $this->transactionDocumentTemplate = TransactionDocumentTemplate::withWhereHas("subTypes", function ($q) {
             $q->where("transaction_document_template_details.transaction_sub_type_id", $this->form->transaction_sub_type_id);
         })->with(["documents"])->get();

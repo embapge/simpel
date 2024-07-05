@@ -16,6 +16,7 @@ class TransactionObserver
     {
         $transaction->histories()->create([
             "status" => TransactionHistoriesStatus::PROGRESS,
+            "date" => now(),
             "description" => "Admin sedang memproses transaksi",
         ]);
     }

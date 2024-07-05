@@ -4,11 +4,13 @@ namespace App\Services\Midtrans;
 
 use App\Enums\InvoiceType;
 use App\Enums\PaymentStatus;
+use App\Enums\TransactionHistoriesStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class BCAService
 {
@@ -19,35 +21,48 @@ class BCAService
         $this->payment = $payment;
     }
 
-    public function updateTransactionStatus($status)
-    {
-        $value = null;
-        if ($status == "pending") {
-            $value = PaymentStatus::PENDING;
-        } elseif ($status == "expire" || $status == "cancel") {
-            $value = PaymentStatus::CANCEL;
-        } elseif ($status == "settlement") {
-            $value = PaymentStatus::PAID;
-        }
-
-        $this->payment->update([
-            "status" => $value,
-        ]);
-
-        return $this;
-    }
-
     public function createResponseTransaction($response)
     {
-        $this->payment->transaction()->create([
+        $paymentTransaction = $this->payment->transaction()->create([
             "response" => json_encode($response),
         ]);
 
-        $this->payment->fresh();
+        $this->payment->refresh();
 
-        $this->updateTransactionStatus($response["transaction_status"]);
+        $value = null;
+        if ($response["transaction_status"] == "pending") {
+            $value = PaymentStatus::PENDING;
 
-        return $this;
+            if (Str::contains(Str::lower($response["status_message"]), 'success')) {
+                $this->payment->invoice->transaction->histories()->create([
+                    "status" => TransactionHistoriesStatus::PROGRESS,
+                    "date" => now(),
+                    "description" => "Menunggu pembayaran pelanggan dengan nomor BCA VA: {$response['va_numbers'][0]['va_number']} dan nominal sebesar Rp. " . number_format($response['gross_amount'], 0, ",", "."),
+                ]);
+            }
+        } elseif ($response["transaction_status"] == "expire") {
+            $value = PaymentStatus::CANCEL;
+
+            $this->payment->invoice->transaction->histories()->create([
+                "status" => TransactionHistoriesStatus::PROGRESS,
+                "date" => now(),
+                "description" => "Pembayaran Expired",
+            ]);
+        } elseif ($response["transaction_status"] == "settlement") {
+            $value = PaymentStatus::PAID;
+
+            $this->payment->invoice->transaction->histories()->create([
+                "status" => TransactionHistoriesStatus::PROGRESS,
+                "date" => now(),
+                "description" => "Pembayaran berhasil dilakukan sebesar Rp. " . number_format($this->payment->amount, 0, ",", "."),
+            ]);
+        }
+
+        $this->payment->update([
+            "status" => $value ?? $this->payment->status,
+        ]);
+
+        return $paymentTransaction;
     }
 
     public function notificationMessage()

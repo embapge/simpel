@@ -14,10 +14,7 @@ class PaymentObserver
      */
     public function created(Payment $payment): void
     {
-        $payment->invoice->transaction->histories()->create([
-            "status" => TransactionHistoriesStatus::PROGRESS,
-            "description" => "Menunggu pembayaran pelanggan",
-        ]);
+        //
     }
 
     /**

@@ -71,9 +71,7 @@ class PaymentTransactionService
             return false;
         }
 
-        $payment->transaction()->create([
-            "response" => json_encode($response)
-        ]);
+        $this->responseService($response);
 
         $payment->refresh();
 
@@ -81,7 +79,7 @@ class PaymentTransactionService
         return $payment->transaction;
     }
 
-    public function notification($response)
+    public function notification($response): bool
     {
         if ($response['fraud_status'] === "deny") {
             return false;
@@ -93,6 +91,17 @@ class PaymentTransactionService
             return false;
         }
 
+        $this->responseService($response);
+
+        $payment->invoice->calculate();
+
+        MidtransTransactionStatusEvent::dispatch($payment);
+
+        return true;
+    }
+
+    public function responseService($response): void
+    {
         if ($response['payment_type'] == "bank_transfer") {
             if (array_key_exists("permata_va_number", $response)) {
                 // Permata
@@ -102,9 +111,5 @@ class PaymentTransactionService
                 (new BCAService(Payment::find($response["order_id"])))->createResponseTransaction($response);
             }
         }
-
-        $payment->invoice->calculate();
-
-        MidtransTransactionStatusEvent::dispatch($payment);
     }
 }

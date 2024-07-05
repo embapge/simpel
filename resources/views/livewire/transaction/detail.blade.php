@@ -534,13 +534,13 @@
                                         <div class="col-xl-4 text-end">
                                             @if (!$editHistories)
                                                 <button type="button" class="btn btn-icon btn-outline-warning"
-                                                    wire:click='editHistoryMode'>
+                                                    id="editHistory" wire:click='editHistoryMode'>
                                                     <span class="tf-icons bx bx-pencil"></span>
                                                 </button>
                                             @else
                                                 <button type="button" class="btn btn-icon btn-outline-success"
-                                                    wire:confirm="Apakah kami yakin histori akan disimpan?"
-                                                    wire:click='storeHistory'>
+                                                    id="saveHistory" wire:click='storeHistory'
+                                                    wire:confirm="Apakah kami yakin histori akan disimpan?">
                                                     <span class="tf-icons bx bx-save"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-icon btn-outline-primary"
