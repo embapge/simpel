@@ -56,7 +56,7 @@ class TransactionForm extends Form
 
     public function setTransaction(Transaction $transaction)
     {
-        $transaction->fresh();
+        $transaction->refresh();
         $this->transaction = $transaction;
         $this->fill([
             "id" => $transaction->id,

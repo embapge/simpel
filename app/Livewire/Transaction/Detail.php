@@ -201,7 +201,7 @@ class Detail extends Component
         foreach ($this->documents as $document) {
             $document->validate();
             if ($document->store()) {
-                $this->transaction->fresh();
+                $this->transaction->refresh();
                 $this->transactionDocuments->push($document);
             }
         }
@@ -283,7 +283,6 @@ class Detail extends Component
     {
         $this->invoice->store($this->transaction);
         $this->transaction->refresh();
-        $this->transaction->load(["documents", "services", "histories", "invoices"]);
         $this->dispatch("invoice-refresh-table");
         Toaster::success("Invoice berhasil di generate");
     }

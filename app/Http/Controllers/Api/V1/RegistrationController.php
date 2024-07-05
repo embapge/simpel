@@ -131,7 +131,7 @@ class RegistrationController extends Controller
             "link" => $url
         ]);
 
-        $verification->fresh();
+        $verification->refresh();
 
         CustomerRegistratedEvent::dispatch($verification, $verification->link, "Mohon untuk mengisi dokumen-dokumen yang harus dipenuhi.");
         Notification::send(User::where("role", "admin")->get(), new UserRegistratedNotification($verification));

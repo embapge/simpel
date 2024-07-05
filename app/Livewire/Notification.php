@@ -33,7 +33,7 @@ class Notification extends Component
 
     public function notify($event)
     {
-        $this->user->fresh();
+        $this->user->refresh();
         $this->count = $this->user->notifications->count();
 
         if ($event['status'] == "expire" || $event['status'] == "cancel") {

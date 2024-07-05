@@ -50,7 +50,7 @@ class TransactionDocumentForm extends Form
 
     public function store()
     {
-        $this->transaction->fresh();
+        $this->transaction->refresh();
         if ($this->transaction->documents->where("id", $this->document_id)->isEmpty()) {
             $this->transaction->documents()->attach($this->document_id);
             $this->document = Document::find($this->document_id);

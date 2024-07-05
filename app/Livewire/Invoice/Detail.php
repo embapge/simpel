@@ -61,9 +61,9 @@ class Detail extends Component
         $this->paymentTransaction->reset();
         $this->payment->reset();
 
-        $this->invoice->fresh();
+        $this->invoice->refresh();
         if ($this->invoice->payment) {
-            $this->invoice->payment->fresh();
+            $this->invoice->payment->refresh();
             $this->payment->setPayment($this->invoice->payment);
             $this->paymentTransaction->setPaymentTransaction($this->invoice->payment->transaction);
         }
