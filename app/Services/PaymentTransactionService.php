@@ -20,7 +20,7 @@ class PaymentTransactionService
 
     public function setPaymentTransaction(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->fresh();
+        $paymentTransaction->refresh();
         $this->paymentTransaction = $paymentTransaction;
         return $this;
     }
@@ -75,7 +75,7 @@ class PaymentTransactionService
             "response" => json_encode($response)
         ]);
 
-        $payment->fresh();
+        $payment->refresh();
 
         MidtransTransactionStatusEvent::dispatch($payment);
         return $payment->transaction;
