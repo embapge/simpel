@@ -50,7 +50,6 @@ class TransactionHistoriesForm extends Form
 
     public function store(Transaction $transaction, TransactionHistoriesStatus $status = TransactionHistoriesStatus::VERIFICATION, string $description)
     {
-        $this->validate();
         $history = $transaction->histories()->create([
             "date" => now(),
             "status" => $status,
