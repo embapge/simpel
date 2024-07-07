@@ -41,9 +41,6 @@
                                             wire:click='editTransactionMode'>
                                             <span class="tf-icons bx bx-pencil"></span>
                                         </button>
-                                        <button type="button" class="btn btn-icon btn-outline-secondary">
-                                            <span class="tf-icons bx bx-printer"></span>
-                                        </button>
                                     @endif
                                 </div>
                             </div>
@@ -493,11 +490,10 @@
                                                             <small class="text-muted">@uang($invoice->total)</small>
                                                         </div>
                                                         <div class="d-flex justify-content-between w-100">
-                                                            <small>03 Januari 2024</small>
-                                                            <small class="text-muted">Rp. 450.000</small>
+                                                            <small>{{ \Carbon\Carbon::parse($invoice->issue_date)->translatedFormat("d F Y h:i:s A") }}</small>
+                                                            <small class="text-{{ $invoice->paymentPaids->sum("amount") == $invoice->total ? 'success' : ( $invoice->paymentPaids->sum("amount") > 0 && $invoice->paymentPaids->sum("amount") < $invoice->total ? 'warning' : 'danger')  }}">@uang($invoice->paymentPaids->sum("amount"))</small>
                                                         </div>
-                                                        <small
-                                                            class="text-muted">{{ $invoice->internal_note }}</small>
+                                                        <small class="text-muted">{{ $invoice->internal_note }}</small>
                                                     </a>
                                                 </div>
                                             </div>
@@ -536,6 +532,10 @@
                                                 <button type="button" class="btn btn-icon btn-outline-warning"
                                                     id="editHistory" wire:click='editHistoryMode'>
                                                     <span class="tf-icons bx bx-pencil"></span>
+                                                </button>
+                                                <button type="button" class="btn btn-icon btn-outline-info"
+                                                    id="sendHistories" wire:confirm="Apakah anda yakin ingin mengirimkan link aktifitas ke pelanggan?" wire:click='sendHistories'>
+                                                    <span class="tf-icons bx bx-mail-send"></span>
                                                 </button>
                                             @else
                                                 <button type="button" class="btn btn-icon btn-outline-success"
@@ -580,7 +580,7 @@
                                         </div>
                                         @foreach ($histories as $iHistory => $history)
                                             <div class="row">
-                                                <div class="col-xl-5 mb-3">
+                                                <div class="col-xl-4 mb-3">
                                                     <label for="" class="form-label">Status</label>
                                                     <select class="form-select"
                                                         wire:model="histories.{{ $iHistory }}.status">
@@ -592,7 +592,17 @@
                                                         @endforeach
                                                     </select>
                                                 </div>
-                                                <div class="col-xl-6 col-11 mb-3">
+                                                <div class="col-xl-3 col-11 mb-3">
+                                                    <label for="" class="form-label">Type</label>
+                                                    <select class="form-select"
+                                                        wire:model="histories.{{ $iHistory }}.type">
+                                                        <option value="">Pilih..</option>
+                                                        <option value="transaction-process">Proses</option>
+                                                        <option value="transaction-cancel">Cancel</option>
+                                                        <option value="transaction-send">Pengiriman</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-xl-4 col-11 mb-3">
                                                     <label for="" class="form-label">Description</label>
                                                     <textarea wire:model="histories.{{ $iHistory }}.description" rows="2" class="form-control"></textarea>
                                                 </div>

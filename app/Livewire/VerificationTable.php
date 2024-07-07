@@ -190,7 +190,7 @@ final class VerificationTable extends PowerGridComponent
                 ->hide(),
             Rule::button('verification-succed')
                 ->when(fn ($row) => $row->documents->where("is_verified", 1)->count() < $row->documents->count())
-                ->when(fn ($row) => $row->status == "success")
+                ->when(fn ($row) => $row->status != "success")
                 ->hide(),
         ];
     }

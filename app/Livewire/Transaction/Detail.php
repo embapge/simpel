@@ -225,7 +225,7 @@ class Detail extends Component
     // Histories
     public function addHistory()
     {
-        $this->histories->push(["status" => "", "description" => ""]);
+        $this->histories->push(["status" => "", "description" => "", "type"]);
     }
 
     public function removeHistory($idx)
@@ -238,12 +238,18 @@ class Detail extends Component
     public function storeHistory()
     {
         foreach ($this->histories as $iHistory => $history) {
-            $this->transactionHistories->push((new TransactionHistoriesForm($this, "transactionHistories." . $this->transactionHistories->keys()->last() ?? 0))->store($this->transaction, TransactionHistoriesStatus::from($history["status"]), $history["description"]));
+            $this->transactionHistories->push((new TransactionHistoriesForm($this, "transactionHistories." . $this->transactionHistories->keys()->last() ?? 0))->store($this->transaction, TransactionHistoriesStatus::from($history["status"]), $history["description"], $history["type"]));
         }
 
         $this->histories = collect([]);
         $this->editHistories = false;
         Toaster::success("History transaksi berhasil ditambahkan");
+    }
+    
+    public function sendHistories()
+    {
+        $this->form->sendHistories();
+        Toaster::success("Aktifitas transaksi berhasil dikirimkan ke pelanggan.");
     }
     // End Histories
 
@@ -306,7 +312,7 @@ class Detail extends Component
     #[On('document-updated')]
     public function checkGenerateable()
     {
-        $this->generateable = $this->transaction->documents->whereNotNull("pivot.date")->whereNotNull("pivot.file")->count() == $this->transaction->documents->count();
+        $this->generateable = $this->transaction->documents->whereNotNull("pivot.date")->whereNotNull("pivot.file")->count() == $this->transaction->documents->count() && $this->transaction->number_display !== "DRAFT";
     }
 
     #[On('document-updated')]

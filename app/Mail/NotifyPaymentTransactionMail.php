@@ -63,8 +63,12 @@ class NotifyPaymentTransactionMail extends Mailable
     {
         if (json_decode($this->invoice->payment->transaction->response, true)["transaction_status"] == "pending") {
             return "mail.text.payment.created";
-        } else if (json_decode($this->invoice->payment->transaction->response, true)["transaction_status"] == "settlement") {
+        } 
+        else if (json_decode($this->invoice->payment->transaction->response, true)["transaction_status"] == "settlement") {
             return "mail.text.payment.paid";
+        }
+        else if (json_decode($this->invoice->payment->transaction->response, true)["transaction_status"] == "expired") {
+            return "mail.text.payment.expired";
         }
     }
 }

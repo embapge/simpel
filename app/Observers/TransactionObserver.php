@@ -3,7 +3,6 @@
 namespace App\Observers;
 
 use App\Enums\TransactionHistoriesStatus;
-use App\Livewire\Forms\TransactionHistoriesForm;
 use App\Models\Transaction;
 use Livewire\Component;
 
@@ -17,6 +16,7 @@ class TransactionObserver
         $transaction->histories()->create([
             "status" => TransactionHistoriesStatus::PROGRESS,
             "date" => now(),
+            "type" => "transaction-created",
             "description" => "Admin sedang memproses transaksi",
         ]);
     }

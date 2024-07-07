@@ -14,7 +14,7 @@ class TransactionHistory extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "transaction_histories";
-    protected $fillable = ["transaction_id", "date", "status", "description"];
+    protected $fillable = ["transaction_id", "date", "type", "status", "description"];
 
     protected static function newFactory(): Factory
     {

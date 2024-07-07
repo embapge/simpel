@@ -37,6 +37,7 @@ class BCAService
                 $this->payment->invoice->transaction->histories()->create([
                     "status" => TransactionHistoriesStatus::PROGRESS,
                     "date" => now(),
+                    "type" => "payment-created",
                     "description" => "Menunggu pembayaran pelanggan dengan nomor BCA VA: {$response['va_numbers'][0]['va_number']} dan nominal sebesar Rp. " . number_format($response['gross_amount'], 0, ",", "."),
                 ]);
             }
@@ -46,6 +47,7 @@ class BCAService
             $this->payment->invoice->transaction->histories()->create([
                 "status" => TransactionHistoriesStatus::PROGRESS,
                 "date" => now(),
+                "type" => "payment-expired",
                 "description" => "Pembayaran Expired",
             ]);
         } elseif ($response["transaction_status"] == "settlement") {
@@ -54,6 +56,7 @@ class BCAService
             $this->payment->invoice->transaction->histories()->create([
                 "status" => TransactionHistoriesStatus::PROGRESS,
                 "date" => now(),
+                "type" => "payment-paid",
                 "description" => "Pembayaran berhasil dilakukan sebesar Rp. " . number_format($this->payment->amount, 0, ",", "."),
             ]);
         }

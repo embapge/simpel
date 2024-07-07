@@ -4,11 +4,13 @@ namespace App\Livewire\Forms;
 
 use App\Enums\TransactionStatus;
 use App\Events\TransactionFindNumberEvent;
+use App\Mail\HistoryActivityMail;
 use App\Models\Customer;
 use App\Models\Document;
 use App\Models\Transaction;
 use App\Models\TransactionSubType;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -119,5 +121,12 @@ class TransactionForm extends Form
     public function generateNumber()
     {
         TransactionFindNumberEvent::dispatch($this->transaction->id);
+    }
+
+    public function sendHistories()
+    {
+        $customer = Customer::find($this->customer_id);
+        // Mail::to($customer->email)->send(new HistoryActivityMail("Mohammad Barata", "http://localhost:3000/transaction/{$this->id}/activity"))->afterCommit();
+        Mail::to("barata@ciptamedianusa.net")->send((new HistoryActivityMail("Mohammad Barata", "http://localhost:3000/transaction/{$this->id}/activity"))->afterCommit());
     }
 }
