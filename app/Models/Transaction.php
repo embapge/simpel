@@ -75,14 +75,16 @@ class Transaction extends Model
     {
         $this->refresh();
 
-        $this->load(["invoices" => function ($q) {
+        $this->load(["services", "invoices" => function ($q) {
             $q->select("id", "transaction_id", "subtotal", "total", "total_bill", "total_payment", "excess_payment");
             $q->with("paymentPaids:id,invoice_id,amount");
         }]);
 
+        // dd($this->services->pluck("price")->sum());
+
         $this->update([
-            "total" => $this->invoices->pluck("total")->sum(),
-            "total_bill" => $this->invoices->pluck("total_bill")->sum(),
+            "total" => $this->services->pluck("price")->sum(),
+            "total_bill" => $this->services->pluck("price")->sum() - $this->invoices->pluck("total_payment")->sum() < 0 ? 0 : $this->services->pluck("price")->sum() - $this->invoices->pluck("total_payment")->sum(),
             "total_payment" => $this->invoices->pluck("total_payment")->sum(),
             "excess_payment" => $this->invoices->pluck("excess_payment")->sum(),
         ]);

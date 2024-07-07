@@ -35,4 +35,8 @@ class Customer extends Model
     {
         return $this->hasMany(Transaction::class, "customer_id", "id");
     }
+
+    public function user(){
+        return $this->belongsToMany(User::class, 'user_customers', 'customer_id', 'user_id');
+    }
 }

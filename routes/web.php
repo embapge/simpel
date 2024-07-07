@@ -21,17 +21,27 @@ Route::middleware([
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::middleware('can:admin,App\Models\User')->group(function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('dashboard');
 
-    Route::get("/customer", function () {
-        return view("customer.index");
-    })->name("customer");
+        Route::get("/customer", function () {
+            return view("customer.index");
+        })->name("customer");
 
-    Route::get("/document", function () {
-        return view("document.index");
-    })->name("document");
+        Route::get("/document", function () {
+            return view("document.index");
+        })->name("document");
+
+        Route::prefix('verification')->group(function () {
+            Route::get("/", Verification::class)->name("verification");
+        });
+
+        Route::prefix('user')->group(function () {
+            Route::get("/", User::class)->name("user");
+        });
+    });
 
     Route::prefix('transaction')->group(function () {
         Route::get("/", function () {
@@ -49,13 +59,6 @@ Route::middleware([
         })->name("invoice.print");
     });
 
-    Route::prefix('verification')->group(function () {
-        Route::get("/", Verification::class)->name("verification");
-    });
-
-    Route::prefix('user')->group(function () {
-        Route::get("/", User::class)->name("user");
-    });
 
     Route::controller(DocumentController::class)->group(function () {
         Route::prefix("document")->group(function () {

@@ -33,32 +33,41 @@
                                     </div>
                                 </div>
                                 <div class="col-xl-6 text-end">
-                                    @if ($editInvoice)
-                                        <button type="button" class="btn btn-icon btn-outline-success"
-                                            wire:click='saveInvoice'>
-                                            <span class="tf-icons bx bx-save"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bx-x" wire:click='editInvoiceMode'></span>
-                                        </button>
-                                    @elseif($form->number_display == 'DRAFT')
-                                        <button type="button" class="btn btn-icon btn-outline-warning"
-                                            wire:click='editInvoiceMode'>
-                                            <span class="tf-icons bx bx-pencil"></span>
-                                        </button>
-                                    @endif
-                                    @if ($paymentTransaction->id)
-                                        <button type="button" class="btn btn-icon btn-outline-secondary"
-                                            wire:click="print" wire:ignore.self>
-                                            <span class="tf-icons bx bx-printer"></span>
-                                        </button>
-                                    @endif
-                                    @if ($paymentTransaction->id)
-                                        <button type="button" class="btn btn-icon btn-outline-info" wire:click="send"
-                                            wire:ignore.self>
-                                            <span class="tf-icons bx bx-mail-send"></span>
-                                        </button>
-                                    @endif
+                                    @can('admin', App\Models\User::class)
+                                        @if ($editInvoice)
+                                            <button type="button" class="btn btn-icon btn-outline-success"
+                                                wire:click='saveInvoice'>
+                                                <span class="tf-icons bx bx-save"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-outline-danger">
+                                                <span class="tf-icons bx bx-x" wire:click='editInvoiceMode'></span>
+                                            </button>
+                                        @elseif($form->number_display == 'DRAFT')
+                                            <button type="button" class="btn btn-icon btn-outline-warning"
+                                                wire:click='editInvoiceMode'>
+                                                <span class="tf-icons bx bx-pencil"></span>
+                                            </button>
+                                        @endif
+                                        @if ($paymentTransaction->id)
+                                            <button type="button" class="btn btn-icon btn-outline-secondary"
+                                                wire:click="print" wire:ignore.self>
+                                                <span class="tf-icons bx bx-printer"></span>
+                                            </button>
+                                        @endif
+                                        @if ($paymentTransaction->id)
+                                            <button type="button" class="btn btn-icon btn-outline-info" wire:click="send"
+                                                wire:ignore.self>
+                                                <span class="tf-icons bx bx-mail-send"></span>
+                                            </button>
+                                        @endif
+                                    @else
+                                        @if ($paymentTransaction->id)
+                                            <button type="button" class="btn btn-icon btn-outline-secondary"
+                                                wire:click="print" wire:ignore.self>
+                                                <span class="tf-icons bx bx-printer"></span>
+                                            </button>
+                                        @endif
+                                    @endcan
                                 </div>
                             </div>
                             <div class="row">
@@ -109,24 +118,26 @@
                                                 <th colspan="2">Description</th>
                                                 <th>Price</th>
                                                 <th>
-                                                    @if (!$editService && !$invoice->number_display)
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-warning"><i
-                                                                class="bx bx-pencil"
-                                                                wire:click='editServiceMode'></i></button>
-                                                    @elseif($editService)
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-primary"><i
-                                                                class="bx bx-save"
-                                                                wire:click='saveServices'></i></button>
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-success"><i
-                                                                class="bx bx-plus" wire:click='addService'></i></button>
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-danger"><i
-                                                                class="bx bx-x"
-                                                                wire:click='editServiceMode'></i></button>
-                                                    @endif
+                                                    @can('admin', App\Models\User::class)
+                                                        @if (!$editService && !$invoice->number_display)
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-warning"><i
+                                                                    class="bx bx-pencil"
+                                                                    wire:click='editServiceMode'></i></button>
+                                                        @elseif($editService)
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-primary"><i
+                                                                    class="bx bx-save"
+                                                                    wire:click='saveServices'></i></button>
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-success"><i
+                                                                    class="bx bx-plus" wire:click='addService'></i></button>
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-danger"><i
+                                                                    class="bx bx-x"
+                                                                    wire:click='editServiceMode'></i></button>
+                                                        @endif
+                                                    @endcan
                                                 </th>
                                             </tr>
                                         </thead>
