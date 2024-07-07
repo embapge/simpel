@@ -225,7 +225,7 @@ class Detail extends Component
     // Histories
     public function addHistory()
     {
-        $this->histories->push(["status" => "", "description" => "", "type"]);
+        $this->histories->push(["status" => "", "description" => "", "type" => ""]);
     }
 
     public function removeHistory($idx)
@@ -237,13 +237,20 @@ class Detail extends Component
 
     public function storeHistory()
     {
-        foreach ($this->histories as $iHistory => $history) {
-            $this->transactionHistories->push((new TransactionHistoriesForm($this, "transactionHistories." . $this->transactionHistories->keys()->last() ?? 0))->store($this->transaction, TransactionHistoriesStatus::from($history["status"]), $history["description"], $history["type"]));
+        $this->validate(["histories.*.status" => "required", "histories.*.type" => "required"],["histories.*.status.required" => "Status harus diisi", "histories.*.type.required" => "Tipe harus diisi"]);
+
+        try {
+            foreach ($this->histories as $iHistory => $history) {
+                $this->transactionHistories->push((new TransactionHistoriesForm($this, "transactionHistories." . $this->transactionHistories->keys()->last() ?? 0))->store($this->transaction, TransactionHistoriesStatus::from($history["status"]), $history["description"], $history["type"]));
+            }
+            $this->histories = collect([]);
+            $this->editHistories = false;
+            Toaster::success("History transaksi berhasil ditambahkan");
+        } catch (\Throwable $th) {
+            //throw $th;
+            Toaster::error($th->getMessage());
         }
 
-        $this->histories = collect([]);
-        $this->editHistories = false;
-        Toaster::success("History transaksi berhasil ditambahkan");
     }
     
     public function sendHistories()

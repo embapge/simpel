@@ -570,7 +570,9 @@
                                             <div class="row">
                                                 <div class="col-xl-4 mb-3">
                                                     <label for="" class="form-label">Status</label>
-                                                    <select class="form-select"
+                                                    <select class="form-select @error("histories.{$iHistory}.status")
+                                                        is-invalid
+                                                    @enderror"
                                                         wire:model="histories.{{ $iHistory }}.status">
                                                         <option value="">Pilih..</option>
                                                         @foreach (App\Enums\TransactionHistoriesStatus::toArray() as $historyStatus)
@@ -579,16 +581,28 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error("histories.{$iHistory}.status")
+                                                        <span class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </span>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-xl-3 col-11 mb-3">
-                                                    <label for="" class="form-label">Type</label>
-                                                    <select class="form-select"
+                                                    <label for="" class="form-label ">Type</label>
+                                                    <select class="form-select @error("histories.{$iHistory}.type")
+                                                        is-invalid
+                                                    @enderror"
                                                         wire:model="histories.{{ $iHistory }}.type">
                                                         <option value="">Pilih..</option>
                                                         <option value="transaction-process">Proses</option>
                                                         <option value="transaction-cancel">Cancel</option>
                                                         <option value="transaction-send">Pengiriman</option>
                                                     </select>
+                                                    @error("histories.{$iHistory}.type")
+                                                        <span class="invalid-feedback">
+                                                            {{ $message }}
+                                                        </span>
+                                                    @enderror
                                                 </div>
                                                 <div class="col-xl-4 col-11 mb-3">
                                                     <label for="" class="form-label">Description</label>
