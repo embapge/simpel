@@ -38,7 +38,8 @@
                                         </button>
                                     @else
                                         <button type="button" class="btn btn-icon btn-outline-warning"
-                                            wire:click='editTransactionMode'>
+                                            wire:click='editTransactionMode'
+                                            @if ($form->status == 'PAID') disabled @endif>
                                             <span class="tf-icons bx bx-pencil"></span>
                                         </button>
                                     @endif
@@ -103,9 +104,10 @@
                                             <th>
                                                 @if (!$editService)
                                                     <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-warning"><i
-                                                            class="bx bx-pencil"
-                                                            wire:click='editServiceMode'></i></button>
+                                                        class="badge badge-center rounded-pill bg-label-warning"
+                                                        wire:click='editServiceMode'
+                                                        @if ($form->status == 'PAID') disabled @endif><i
+                                                            class="bx bx-pencil"></i></button>
                                                 @else
                                                     <button type="button"
                                                         class="badge badge-center rounded-pill bg-label-primary"><i
@@ -114,8 +116,8 @@
                                                         class="badge badge-center rounded-pill bg-label-success"><i
                                                             class="bx bx-plus" wire:click='addService'></i></button>
                                                     <button type="button"
-                                                        class="badge badge-center rounded-pill bg-label-danger"><i
-                                                            class="bx bx-x" wire:click='editServiceMode'></i></button>
+                                                        class="badge badge-center rounded-pill bg-label-danger"
+                                                        wire:click='editServiceMode'><i class="bx bx-x"></i></button>
                                                 @endif
                                             </th>
                                         </tr>
@@ -466,7 +468,7 @@
                                             <button type="button" class="btn btn-icon btn-outline-primary"
                                                 wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
                                                 wire:click='generateInvoice'
-                                                @if (!$generateable) disabled @endif>
+                                                @if (!$generateable || $form->status == 'PAID') disabled @endif>
                                                 <span class="tf-icons bx bx-refresh"></span>
                                             </button>
                                         </div>
@@ -490,10 +492,12 @@
                                                             <small class="text-muted">@uang($invoice->total)</small>
                                                         </div>
                                                         <div class="d-flex justify-content-between w-100">
-                                                            <small>{{ \Carbon\Carbon::parse($invoice->issue_date)->translatedFormat("d F Y h:i:s A") }}</small>
-                                                            <small class="text-{{ $invoice->paymentPaids->sum("amount") == $invoice->total ? 'success' : ( $invoice->paymentPaids->sum("amount") > 0 && $invoice->paymentPaids->sum("amount") < $invoice->total ? 'warning' : 'danger')  }}">@uang($invoice->paymentPaids->sum("amount"))</small>
+                                                            <small>{{ \Carbon\Carbon::parse($invoice->issue_date)->translatedFormat('d F Y h:i:s A') }}</small>
+                                                            <small
+                                                                class="text-{{ $invoice->paymentPaids->sum('amount') == $invoice->total ? 'success' : ($invoice->paymentPaids->sum('amount') > 0 && $invoice->paymentPaids->sum('amount') < $invoice->total ? 'warning' : 'danger') }}">@uang($invoice->paymentPaids->sum('amount'))</small>
                                                         </div>
-                                                        <small class="text-muted">{{ $invoice->internal_note }}</small>
+                                                        <small
+                                                            class="text-muted">{{ $invoice->internal_note }}</small>
                                                     </a>
                                                 </div>
                                             </div>
@@ -534,7 +538,9 @@
                                                     <span class="tf-icons bx bx-pencil"></span>
                                                 </button>
                                                 <button type="button" class="btn btn-icon btn-outline-info"
-                                                    id="sendHistories" wire:confirm="Apakah anda yakin ingin mengirimkan link aktifitas ke pelanggan?" wire:click='sendHistories'>
+                                                    id="sendHistories"
+                                                    wire:confirm="Apakah anda yakin ingin mengirimkan link aktifitas ke pelanggan?"
+                                                    wire:click='sendHistories'>
                                                     <span class="tf-icons bx bx-mail-send"></span>
                                                 </button>
                                             @else
@@ -582,7 +588,8 @@
                                             <div class="row">
                                                 <div class="col-xl-4 mb-3">
                                                     <label for="" class="form-label">Status</label>
-                                                    <select class="form-select @error("histories.{$iHistory}.status")
+                                                    <select
+                                                        class="form-select @error("histories.{$iHistory}.status")
                                                         is-invalid
                                                     @enderror"
                                                         wire:model="histories.{{ $iHistory }}.status">
@@ -601,7 +608,8 @@
                                                 </div>
                                                 <div class="col-xl-3 col-11 mb-3">
                                                     <label for="" class="form-label ">Type</label>
-                                                    <select class="form-select @error("histories.{$iHistory}.type")
+                                                    <select
+                                                        class="form-select @error("histories.{$iHistory}.type")
                                                         is-invalid
                                                     @enderror"
                                                         wire:model="histories.{{ $iHistory }}.type">

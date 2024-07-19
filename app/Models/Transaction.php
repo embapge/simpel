@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Casts\NumberDisplayCast;
 use App\Casts\StatusCast;
 use App\Casts\UangCast;
+use App\Enums\TransactionStatus;
 use App\Observers\TransactionObserver;
 use Database\Factories\TransactionFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -21,7 +22,7 @@ class Transaction extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "transactions";
-    protected $fillable = ["customer_id", "number_display", "type", "transaction_sub_type_id", "total_bill", "total", "total_payment", "excess_payment", "status", "internal_note"];
+    protected $fillable = ["customer_id", "number_display", "type", "transaction_sub_type_id", "total_bill", "total", "total_payment", "excess_payment", "status", "internal_note", "created_at"];
 
     protected function casts()
     {
@@ -80,11 +81,26 @@ class Transaction extends Model
             $q->with("paymentPaids:id,invoice_id,amount");
         }]);
 
+        if ($this->number_display) {
+            $totalBill = $this->invoices->pluck("total_bill")->sum();
+            $total = $this->invoices->pluck("total")->sum();
+            if ($totalBill == 0) {
+                $status = TransactionStatus::PAID;
+            } else if ($totalBill > 0 && $totalBill < $total) {
+                $status = TransactionStatus::LESSPAID;
+            } else {
+                $status = TransactionStatus::UNPAID;
+            }
+        } else {
+            $status = TransactionStatus::DRAFT;
+        }
+
         $this->update([
-            "total" => $this->invoices->pluck("total")->sum(),
-            "total_bill" => $this->invoices->pluck("total_bill")->sum(),
+            "total" => $total,
+            "total_bill" => $totalBill,
             "total_payment" => $this->invoices->pluck("total_payment")->sum(),
             "excess_payment" => $this->invoices->pluck("excess_payment")->sum(),
+            "status" => $status
         ]);
 
         return $this;

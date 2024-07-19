@@ -25,7 +25,7 @@ class FortifyServiceProvider extends ServiceProvider
         {
             public function toResponse($request)
             {
-                return redirect('/customer');
+                return redirect('/');
             }
         });
     }

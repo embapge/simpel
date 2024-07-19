@@ -38,7 +38,7 @@ final class VerificationTable extends PowerGridComponent
             Exportable::make('export')
                 ->striped()
                 ->type(Exportable::TYPE_XLS, Exportable::TYPE_CSV),
-            Header::make()->showSearchInput(),
+            Header::make()->showToggleColumns(),
             Footer::make()
                 ->showPerPage()
                 ->showRecordCount(),
@@ -47,7 +47,7 @@ final class VerificationTable extends PowerGridComponent
 
     public function datasource(): ?Builder
     {
-        return Verification::query()->with(["documents"]);
+        return Verification::with(["documents"])->select("verifications.*");
         // return DB::table('verifications')->leftJoin("verification_documents", "verifications.id", "=", "verification_documents.verification_id")->select("verifications.id");
     }
 
@@ -67,11 +67,11 @@ final class VerificationTable extends PowerGridComponent
             ->add('pic_name')
             ->add('address')
             ->add('email')
-            ->add('verify_at_formatted', fn ($model) => Carbon::parse($model->verify_at)->format('d/m/Y H:i:s'))
+            ->add('verify_at_formatted', fn ($model) => $model->verify_at ? Carbon::parse($model->verify_at)->translatedFormat('d F Y H:i:s A') : "Belum diverifikasi")
             ->add('phone_number')
             ->add('website')
-            ->add('created_at')
-            ->add('updated_at')
+            ->add('created_at_formatted', fn ($model) => $model->created_at ? Carbon::parse($model->created_at)->translatedFormat('d F Y H:i:s A') : "")
+            ->add('updated_at_formatted', fn ($model) => $model->updated_at ? Carbon::parse($model->updated_at)->translatedFormat('d F Y H:i:s A') : "")
             ->add('created_by')
             ->add('updated_by')
             ->add('status');
@@ -80,13 +80,6 @@ final class VerificationTable extends PowerGridComponent
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Transaction sub type id', 'transaction_sub_type_id')
-                ->sortable()
-                ->searchable(),
 
             Column::make('Name', 'name')
                 ->sortable()
@@ -116,18 +109,10 @@ final class VerificationTable extends PowerGridComponent
                 ->searchable(),
 
             Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
-
-            Column::make('Created at', 'created_at')
-                ->sortable()
-                ->searchable(),
+                ->sortable()->searchable(),
 
             Column::make('Updated at', 'updated_at_formatted', 'updated_at')
-                ->sortable(),
-
-            Column::make('Updated at', 'updated_at')
-                ->sortable()
-                ->searchable(),
+                ->sortable()->searchable(),
 
             Column::make('Created by', 'created_by')
                 ->sortable()
@@ -148,7 +133,17 @@ final class VerificationTable extends PowerGridComponent
     public function filters(): array
     {
         return [
-            Filter::datetimepicker('verify_at'),
+            Filter::inputText("name")->operators(["contains"]),
+            Filter::inputText("pic_name")->operators(["contains"]),
+            Filter::inputText("address")->operators(["contains"]),
+            Filter::inputText("email")->operators(["contains"]),
+            Filter::inputText("phone_number")->operators(["contains"]),
+            Filter::inputText("website")->operators(["contains"]),
+            Filter::inputText("created_by")->operators(["contains"]),
+            Filter::inputText("updated_by")->operators(["contains"]),
+            Filter::datepicker('verify_at'),
+            Filter::datepicker('created_at'),
+            Filter::datepicker('updated_at'),
         ];
     }
 
