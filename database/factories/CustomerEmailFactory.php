@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\CustomerEmail;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -18,7 +19,8 @@ class CustomerEmailFactory extends Factory
         $faker = Faker::create("id_ID");
         return [
             "address" => $faker->safeEmail(),
-            "name" => $faker->name()
+            "name" => $faker->name(),
+            "created_by" => User::first()->id
         ];
     }
 }

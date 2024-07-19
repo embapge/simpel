@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Invoice;
+use App\Models\User;
 use Faker\Factory as Faker;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -28,7 +29,8 @@ class InvoiceFactory extends Factory
             "status" => $faker->randomElement(['draft', 'unpaid', 'paid', 'lesspaid', 'cancel']),
             "customer_name" => $faker->company(),
             "customer_pic_name" => $faker->name(),
-            "issue_date" => $faker->dateTimeThisYear()
+            "issue_date" => $faker->dateTimeThisYear(),
+            "created_by" => User::first()->id
         ];
     }
 }

@@ -16,6 +16,11 @@ class InvoiceSeeder extends Seeder
     {
         foreach (Transaction::all() as $transaction) {
             Invoice::factory()->count(3)->for($transaction)->create();
+            $transaction->refresh();
+
+            foreach ($transaction->invoices as $invoice) {
+                $invoice->calculate();
+            }
         }
     }
 }
