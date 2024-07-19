@@ -6,9 +6,6 @@ use Illuminate\Support\Str;
 
 enum PaymentStatus: string
 {
-
-        // pending, in process, paid, cancel
-
     case PENDING = "pending";
     case IN_PROCESS = "in process";
     case PAID = "paid";

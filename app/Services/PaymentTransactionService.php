@@ -94,6 +94,7 @@ class PaymentTransactionService
         $this->responseService($response);
 
         $payment->invoice->calculate();
+        $payment->invoice->transaction->calculate();
 
         MidtransTransactionStatusEvent::dispatch($payment);
 

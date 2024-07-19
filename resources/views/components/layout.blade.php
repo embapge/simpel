@@ -29,6 +29,7 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
         href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/assets/vendor/fonts/boxicons.css', 'resources/assets/vendor/css/core.css', 'resources/assets/vendor/css/theme-default.css', 'resources/assets/css/demo.css', 'resources/assets/css/custom.css', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css', 'resources/assets/vendor/js/helpers.js', 'resources/assets/js/config.js'])
     @stack('midtrans')
+    @stack('layout-header')
 </head>
 
 <body>
@@ -200,12 +201,13 @@ https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css
     <x-toaster-hub />
     <!-- Core JS -->
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+    @stack('layout-footer')
     @vite(['resources/assets/vendor/libs/popper/popper.js', 'resources/assets/vendor/js/bootstrap.js', 'resources/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js', 'resources/assets/vendor/js/menu.js', 'resources/assets/js/extended-ui-perfect-scrollbar.js', 'resources/assets/js/main.js', 'resources/assets/js/select2.js'])
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script
         src="
-                                                                                                                                                                                https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
-                                                                                                                                                                                ">
+                                                                                                                                                                                            https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js
+                                                                                                                                                                                            ">
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>

@@ -30,23 +30,24 @@
                                 </div>
                                 <div class="col-xl-6 text-end">
                                     @can('admin', App\Models\User::class)
-                                    @if ($editTransaction)
-                                        <button type="button" class="btn btn-icon btn-outline-success"
-                                            wire:click='saveTransaction'>
-                                            <span class="tf-icons bx bx-save"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-outline-danger">
-                                            <span class="tf-icons bx bx-x" wire:click='editTransactionMode'></span>
-                                        </button>
-                                    @else
-                                        <button type="button" class="btn btn-icon btn-outline-warning"
-                                            wire:click='editTransactionMode'>
-                                            <span class="tf-icons bx bx-pencil"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-icon btn-outline-secondary">
-                                            <span class="tf-icons bx bx-printer"></span>
-                                        </button>
-                                    @endif
+                                        @if ($editTransaction)
+                                            <button type="button" class="btn btn-icon btn-outline-success"
+                                                wire:click='saveTransaction'>
+                                                <span class="tf-icons bx bx-save"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-outline-danger">
+                                                <span class="tf-icons bx bx-x" wire:click='editTransactionMode'></span>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-icon btn-outline-warning"
+                                                wire:click='editTransactionMode'
+                                                @if ($form->status == 'PAID') disabled @endif>
+                                                <span class="tf-icons bx bx-pencil"></span>
+                                            </button>
+                                            <button type="button" class="btn btn-icon btn-outline-secondary">
+                                                <span class="tf-icons bx bx-printer"></span>
+                                            </button>
+                                        @endif
                                     @endcan
                                 </div>
                             </div>
@@ -110,9 +111,10 @@
                                                 @can('admin', App\Models\User::class)
                                                     @if (!$editService)
                                                         <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-warning"><i
-                                                                class="bx bx-pencil"
-                                                                wire:click='editServiceMode'></i></button>
+                                                            class="badge badge-center rounded-pill bg-label-warning"
+                                                            wire:click='editServiceMode'
+                                                            @if ($form->status == 'PAID') disabled @endif><i
+                                                                class="bx bx-pencil"></i></button>
                                                     @else
                                                         <button type="button"
                                                             class="badge badge-center rounded-pill bg-label-primary"><i
@@ -121,8 +123,8 @@
                                                             class="badge badge-center rounded-pill bg-label-success"><i
                                                                 class="bx bx-plus" wire:click='addService'></i></button>
                                                         <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-danger"><i
-                                                                class="bx bx-x" wire:click='editServiceMode'></i></button>
+                                                            class="badge badge-center rounded-pill bg-label-danger"
+                                                            wire:click='editServiceMode'><i class="bx bx-x"></i></button>
                                                     @endif
                                                 @endcan
                                             </th>
@@ -384,245 +386,252 @@
                                                                 <button type="button"
                                                                     class="badge 
                                                                     bg-danger rounded-pill p-1"
-                                                                wire:click='revertUploadDocument("{{ $document->document->id }}")'><i
-                                                                    class="bx bx-x bx-xs"></i></button>
-                                                        @endif
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                        @if ($editDetailDocument)
-                                            @foreach ($documents as $iNewDoc => $document)
-                                                <tr class="align-content-center text-xs"
-                                                    wire:key='{{ $iNewDoc }}'>
-                                                    <td class="w-px-200" colspan="2">
-                                                        <x-select2 class="form-select form-select-sm mb-1 select2"
-                                                            :datas='$documentsModel'
-                                                            wire:model="documents.{{ $iNewDoc }}.document_id"
-                                                            name="documents[]"
-                                                            id="documents{{ $iNewDoc }}document_id" />
-                                                        <x-alert-message
-                                                            name="documents.{{ $iNewDoc }}.document_id" />
-                                                    </td>
-                                                    <td class="text-end w-1">
-                                                        <button type="button"
-                                                            class="badge badge-center rounded-pill bg-label-danger"
-                                                            wire:click='removeDetailDocument("{{ $iNewDoc }}")'>
-                                                            <i class="bx bx-minus"></i>
-                                                        </button>
+                                                                    wire:click='revertUploadDocument("{{ $document->document->id }}")'><i
+                                                                        class="bx bx-x bx-xs"></i></button>
+                                                            @endif
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
-                                        @endif
-                                    </table>
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card overflow-hidden mb-4" style="height: 300px">
-                                <div class="card-header pb-1">
-                                    <div class="row">
-                                        <div class="col-xl-8">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <i class='bx bx-file bx-md'></i>
-                                                </div>
-                                                <div class="flex-grow-1 row">
-                                                    <div class="col-8 col-sm-7 mb-sm-0 mb-2">
-                                                        <h4 class="mb-0">Invoices</h4>
-                                                        <small class="text-muted">Process</small>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 text-end">
-                                            @can('admin', App\Models\User::class)
-                                            <button type="button" class="btn btn-icon btn-outline-primary"
-                                                wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
-                                                wire:click='generateInvoice'
-                                                @if (!$generateable) disabled @endif>
-                                                <span class="tf-icons bx bx-refresh"></span>
-                                            </button>
-                                            @endcan
-                                        </div>
-                                        <div class="divider p-0 m-0">
-                                            <div class="divider-text"><i class='bx bx-search-alt'></i></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    @foreach ($transaction->invoices as $invoice)
-                                        <div class="row text-sm mb-3">
-                                            <div class="col p-0">
-                                                <div class="list-group">
-                                                    <a href="{{ route('invoice.detail', ['invoice' => $invoice->id]) }}"
-                                                        class="list-group-item list-group-item-action flex-column align-items-start"
-                                                        target="__blank">
-                                                        <div class="d-flex justify-content-between w-100">
-                                                            <h6 class="mb-0">
-                                                                {{ $invoice->number_display ?? $invoice->id }}
-                                                            </h6>
-                                                            <small class="text-muted">@uang($invoice->total)</small>
-                                                        </div>
-                                                        <div class="d-flex justify-content-between w-100">
-                                                            <small>{{ \Carbon\Carbon::parse($invoice->issue_date)->translatedFormat("d F Y h:i:s A") }}</small>
-                                                            <small class="text-{{ $invoice->paymentPaids->sum("amount") == $invoice->total ? 'success' : ( $invoice->paymentPaids->sum("amount") > 0 && $invoice->paymentPaids->sum("amount") < $invoice->total ? 'warning' : 'danger')  }}">@uang($invoice->paymentPaids->sum("amount"))</small>
-                                                        </div>
-                                                        <small class="text-muted">{{ $invoice->internal_note }}</small>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
-                                    </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <div class="card overflow-hidden mb-4" style="height: 300px">
-                                <div class="card-header pb-1">
-                                    <div class="row">
-                                        <div class="col-xl-8">
-                                            <div class="d-flex">
-                                                <div class="flex-shrink-0 me-2">
-                                                    <i class='bx bx-file bx-md'></i>
-                                                </div>
-                                                <div class="flex-grow-1 row">
-                                                    <div class="col-8 col-sm-7 mb-sm-0 mb-2">
-                                                        <h4 class="mb-0">Status</h4>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-xl-4 text-end">
-                                            @can('admin', App\Models\User::class)
-                                            @if (!$editHistories)
-                                                <button type="button" class="btn btn-icon btn-outline-warning"
-                                                    id="editHistory" wire:click='editHistoryMode'>
-                                                    <span class="tf-icons bx bx-pencil"></span>
-                                                </button>
-                                                <button type="button" class="btn btn-icon btn-outline-info"
-                                                    id="sendHistories" wire:confirm="Apakah anda yakin ingin mengirimkan link aktifitas ke pelanggan?" wire:click='sendHistories'>
-                                                    <span class="tf-icons bx bx-mail-send"></span>
-                                                </button>
-                                            @else
-                                                <button type="button" class="btn btn-icon btn-outline-success"
-                                                    id="saveHistory" wire:click='storeHistory'
-                                                    wire:confirm="Apakah kami yakin histori akan disimpan?">
-                                                    <span class="tf-icons bx bx-save"></span>
-                                                </button>
-                                                <button type="button" class="btn btn-icon btn-outline-primary"
-                                                    wire:click='addHistory'>
-                                                    <span class="tf-icons bx bx-plus"></span>
-                                                </button>
-                                                <button type="button" class="btn btn-icon btn-outline-danger"
-                                                    wire:click='editHistoryMode'>
-                                                    <span class="tf-icons bx bx-x"></span>
-                                                </button>
+                                            @if ($editDetailDocument)
+                                                @foreach ($documents as $iNewDoc => $document)
+                                                    <tr class="align-content-center text-xs"
+                                                        wire:key='{{ $iNewDoc }}'>
+                                                        <td class="w-px-200" colspan="2">
+                                                            <x-select2 class="form-select form-select-sm mb-1 select2"
+                                                                :datas='$documentsModel'
+                                                                wire:model="documents.{{ $iNewDoc }}.document_id"
+                                                                name="documents[]"
+                                                                id="documents{{ $iNewDoc }}document_id" />
+                                                            <x-alert-message
+                                                                name="documents.{{ $iNewDoc }}.document_id" />
+                                                        </td>
+                                                        <td class="text-end w-1">
+                                                            <button type="button"
+                                                                class="badge badge-center rounded-pill bg-label-danger"
+                                                                wire:click='removeDetailDocument("{{ $iNewDoc }}")'>
+                                                                <i class="bx bx-minus"></i>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
                                             @endif
-                                            @endcan
+                                        </table>
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
                                         </div>
-                                        <div class="divider p-0 m-0">
-                                            <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
-                                    <div class="row text-sm">
-                                        <div class="col p-0 mb-3">
-                                            @foreach ($transactionHistories as $history)
-                                                <div class="list-group mb-3">
-                                                    <a href="javascript:void(0);"
-                                                        class="list-group-item list-group-item-action flex-column align-items-start">
-                                                        <div class="d-flex justify-content-between w-100">
-                                                            <div class="d-flex space-x-6">
-                                                                @can('admin', App\Models\User::class)
-                                                                <input type="checkbox" class="form-check-input">
-                                                                @endcan
-                                                                <h6 class="mb-0">{{ $history->status }}</h6>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card overflow-hidden mb-4" style="height: 300px">
+                                    <div class="card-header pb-1">
+                                        <div class="row">
+                                            <div class="col-xl-8">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class='bx bx-file bx-md'></i>
+                                                    </div>
+                                                    <div class="flex-grow-1 row">
+                                                        <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                                                            <h4 class="mb-0">Invoices</h4>
+                                                            <small class="text-muted">Process</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 text-end">
+                                                @can('admin', App\Models\User::class)
+                                                    <button type="button" class="btn btn-icon btn-outline-primary"
+                                                        wire:confirm="Apakah anda yakin? Invoice akan tergenerate"
+                                                        wire:click='generateInvoice'
+                                                        @if (!$generateable || $form->status == 'PAID') disabled @endif>
+                                                        <span class="tf-icons bx bx-refresh"></span>
+                                                    </button>
+                                                @endcan
+                                            </div>
+                                            <div class="divider p-0 m-0">
+                                                <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
+                                        @foreach ($transaction->invoices as $invoice)
+                                            <div class="row text-sm mb-3">
+                                                <div class="col p-0">
+                                                    <div class="list-group">
+                                                        <a href="{{ route('invoice.detail', ['invoice' => $invoice->id]) }}"
+                                                            class="list-group-item list-group-item-action flex-column align-items-start"
+                                                            target="__blank">
+                                                            <div class="d-flex justify-content-between w-100">
+                                                                <h6 class="mb-0">
+                                                                    {{ $invoice->number_display ?? $invoice->id }}
+                                                                </h6>
+                                                                <small class="text-muted">@uang($invoice->total)</small>
+                                                            </div>
+                                                            <div class="d-flex justify-content-between w-100">
+                                                                <small>{{ \Carbon\Carbon::parse($invoice->issue_date)->translatedFormat('d F Y h:i:s A') }}</small>
+                                                                <small
+                                                                    class="text-{{ $invoice->paymentPaids->sum('amount') == $invoice->total ? 'success' : ($invoice->paymentPaids->sum('amount') > 0 && $invoice->paymentPaids->sum('amount') < $invoice->total ? 'warning' : 'danger') }}">@uang($invoice->paymentPaids->sum('amount'))</small>
                                                             </div>
                                                             <small
-                                                                class="text-muted">{{ \Carbon\Carbon::parse($history->date)->translatedFormat('d F Y h:i:s A') }}</small>
-                                                        </div>
-                                                        <small class="text-muted">{{ $history->description }}</small>
-                                                    </a>
-                                                </div>
-                                            @endforeach
-                                        </div>
-                                        @foreach ($histories as $iHistory => $history)
-                                            <div class="row">
-                                                <div class="col-xl-4 mb-3">
-                                                    <label for="" class="form-label">Status</label>
-                                                    <select class="form-select @error("histories.{$iHistory}.status")
-                                                        is-invalid
-                                                    @enderror"
-                                                        wire:model="histories.{{ $iHistory }}.status">
-                                                        <option value="">Pilih..</option>
-                                                        @foreach (App\Enums\TransactionHistoriesStatus::toArray() as $historyStatus)
-                                                            <option value="{{ $historyStatus['id'] }}">
-                                                                {{ $historyStatus['name'] }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error("histories.{$iHistory}.status")
-                                                        <span class="invalid-feedback">
-                                                            {{ $message }}
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-xl-3 col-11 mb-3">
-                                                    <label for="" class="form-label ">Type</label>
-                                                    <select class="form-select @error("histories.{$iHistory}.type")
-                                                        is-invalid
-                                                    @enderror"
-                                                        wire:model="histories.{{ $iHistory }}.type">
-                                                        <option value="">Pilih..</option>
-                                                        <option value="transaction-process">Proses</option>
-                                                        <option value="transaction-cancel">Cancel</option>
-                                                        <option value="transaction-send">Pengiriman</option>
-                                                    </select>
-                                                    @error("histories.{$iHistory}.type")
-                                                        <span class="invalid-feedback">
-                                                            {{ $message }}
-                                                        </span>
-                                                    @enderror
-                                                </div>
-                                                <div class="col-xl-4 col-11 mb-3">
-                                                    <label for="" class="form-label">Description</label>
-                                                    <textarea wire:model="histories.{{ $iHistory }}.description" rows="2" class="form-control"></textarea>
-                                                </div>
-                                                <div class="col-1">
-                                                    <button
-                                                        class="badge badge-center rounded-pill bg-label-danger mt-5"
-                                                        wire:click="removeHistory({{ $iHistory }})">
-                                                        <span class="bx bx-minus"></span>
-                                                    </button>
+                                                                class="text-muted">{{ $invoice->internal_note }}</small>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endforeach
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                                        </div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
-                                        <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="card overflow-hidden mb-4" style="height: 300px">
+                                    <div class="card-header pb-1">
+                                        <div class="row">
+                                            <div class="col-xl-8">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0 me-2">
+                                                        <i class='bx bx-file bx-md'></i>
+                                                    </div>
+                                                    <div class="flex-grow-1 row">
+                                                        <div class="col-8 col-sm-7 mb-sm-0 mb-2">
+                                                            <h4 class="mb-0">Status</h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 text-end">
+                                                @can('admin', App\Models\User::class)
+                                                    @if (!$editHistories)
+                                                        <button type="button" class="btn btn-icon btn-outline-warning"
+                                                            id="editHistory" wire:click='editHistoryMode'>
+                                                            <span class="tf-icons bx bx-pencil"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-info"
+                                                            id="sendHistories"
+                                                            wire:confirm="Apakah anda yakin ingin mengirimkan link aktifitas ke pelanggan?"
+                                                            wire:click='sendHistories'>
+                                                            <span class="tf-icons bx bx-mail-send"></span>
+                                                        </button>
+                                                    @else
+                                                        <button type="button" class="btn btn-icon btn-outline-success"
+                                                            id="saveHistory" wire:click='storeHistory'
+                                                            wire:confirm="Apakah kami yakin histori akan disimpan?">
+                                                            <span class="tf-icons bx bx-save"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-primary"
+                                                            wire:click='addHistory'>
+                                                            <span class="tf-icons bx bx-plus"></span>
+                                                        </button>
+                                                        <button type="button" class="btn btn-icon btn-outline-danger"
+                                                            wire:click='editHistoryMode'>
+                                                            <span class="tf-icons bx bx-x"></span>
+                                                        </button>
+                                                    @endif
+                                                @endcan
+                                            </div>
+                                            <div class="divider p-0 m-0">
+                                                <div class="divider-text"><i class='bx bx-search-alt'></i></div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
-                                        <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                    <div class="card-body ps ps--active-y perfect-scrollbar" id="vertical-example">
+                                        <div class="row text-sm">
+                                            <div class="col p-0 mb-3">
+                                                @foreach ($transactionHistories as $history)
+                                                    <div class="list-group mb-3">
+                                                        <a href="javascript:void(0);"
+                                                            class="list-group-item list-group-item-action flex-column align-items-start">
+                                                            <div class="d-flex justify-content-between w-100">
+                                                                <div class="d-flex space-x-6">
+                                                                    @can('admin', App\Models\User::class)
+                                                                        <input type="checkbox" class="form-check-input">
+                                                                    @endcan
+                                                                    <h6 class="mb-0">{{ $history->status }}</h6>
+                                                                </div>
+                                                                <small
+                                                                    class="text-muted">{{ \Carbon\Carbon::parse($history->date)->translatedFormat('d F Y h:i:s A') }}</small>
+                                                            </div>
+                                                            <small class="text-muted">{{ $history->description }}</small>
+                                                        </a>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                            @foreach ($histories as $iHistory => $history)
+                                                <div class="row">
+                                                    <div class="col-xl-4 mb-3">
+                                                        <label for="" class="form-label">Status</label>
+                                                        <select
+                                                            class="form-select @error("histories.{$iHistory}.status")
+                                                        is-invalid
+                                                    @enderror"
+                                                            wire:model="histories.{{ $iHistory }}.status">
+                                                            <option value="">Pilih..</option>
+                                                            @foreach (App\Enums\TransactionHistoriesStatus::toArray() as $historyStatus)
+                                                                <option value="{{ $historyStatus['id'] }}">
+                                                                    {{ $historyStatus['name'] }}
+                                                                </option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error("histories.{$iHistory}.status")
+                                                            <span class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-xl-3 col-11 mb-3">
+                                                        <label for="" class="form-label ">Type</label>
+                                                        <select
+                                                            class="form-select @error("histories.{$iHistory}.type")
+                                                        is-invalid
+                                                    @enderror"
+                                                            wire:model="histories.{{ $iHistory }}.type">
+                                                            <option value="">Pilih..</option>
+                                                            <option value="transaction-process">Proses</option>
+                                                            <option value="transaction-cancel">Cancel</option>
+                                                            <option value="transaction-send">Pengiriman</option>
+                                                        </select>
+                                                        @error("histories.{$iHistory}.type")
+                                                            <span class="invalid-feedback">
+                                                                {{ $message }}
+                                                            </span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="col-xl-4 col-11 mb-3">
+                                                        <label for="" class="form-label">Description</label>
+                                                        <textarea wire:model="histories.{{ $iHistory }}.description" rows="2" class="form-control"></textarea>
+                                                    </div>
+                                                    <div class="col-1">
+                                                        <button
+                                                            class="badge badge-center rounded-pill bg-label-danger mt-5"
+                                                            wire:click="removeHistory({{ $iHistory }})">
+                                                            <span class="bx bx-minus"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                        <div class="ps__rail-x" style="left: 0px; bottom: -788px;">
+                                            <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+                                        </div>
+                                        <div class="ps__rail-y" style="top: 788px; height: 232px; right: 0px;">
+                                            <div class="ps__thumb-y" tabindex="0" style="top: 156px; height: 45px;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -633,4 +642,3 @@
             </div>
         </div>
     </div>
-</div>

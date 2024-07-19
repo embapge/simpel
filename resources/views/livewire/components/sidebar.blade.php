@@ -105,6 +105,12 @@
         <li class="menu-header small text-uppercase">
             <span class="menu-header-text">Main</span>
         </li>
+        <li class="menu-item {{ request()->is('/') ? 'active' : '' }}">
+            <a href="{{ route('dashboard') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-home"></i>
+                <div data-i18n="Dashboard">Dashboard</div>
+            </a>
+        </li>
         <li class="menu-item {{ request()->is('transaction*') ? 'active' : '' }}">
             <a href="{{ route('transaction') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bxs-ship"></i>

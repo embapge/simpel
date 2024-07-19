@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Transaction;
+use App\Models\TransactionSubType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -15,9 +16,9 @@ class TransactionFactory extends Factory
         $numberDisplay = $faker->randomElement([null, $faker->bothify("######/SMPL/INV/####")]);
         return [
             "number_display" => $numberDisplay,
-            "type" => "document",
-            "sub_type" => $faker->randomElement(["kk", "ppmkk", "ppkk", "kp", "rbsgmk"]),
-            "status" => "draft"
+            "transaction_sub_type_id" => $faker->randomElement(TransactionSubType::all()->pluck("id")->toArray()),
+            "status" => "draft",
+            "created_at" => $faker->dateTimeThisYear()
         ];
     }
 }
