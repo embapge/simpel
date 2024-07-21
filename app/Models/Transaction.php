@@ -81,14 +81,8 @@ class Transaction extends Model
             $q->with("paymentPaids:id,invoice_id,amount");
         }]);
 
-<<<<<<< HEAD
-        if ($this->number_display) {
-            $totalBill = $this->invoices->pluck("total_bill")->sum();
-            $total = $this->invoices->pluck("total")->sum();
-=======
         if ($this->number_display != "DRAFT") {
             $totalBill = $this->services->sum("price") - $this->invoices->pluck("total_payment")->sum() < 0 ? 0 : $this->services->sum("price") - $this->invoices->pluck("total_payment")->sum();
->>>>>>> dummyData
             if ($totalBill == 0) {
                 $status = TransactionStatus::PAID;
             } else if ($totalBill > 0 && $totalBill < $this->services->sum("price")) {
@@ -103,13 +97,8 @@ class Transaction extends Model
         // dd($this->services->pluck("price")->sum());
 
         $this->update([
-<<<<<<< HEAD
-            "total" => $this->services->pluck("price")->sum(),
-            "total_bill" => $this->services->pluck("price")->sum() - $this->invoices->pluck("total_payment")->sum() < 0 ? 0 : $this->services->pluck("price")->sum() - $this->invoices->pluck("total_payment")->sum(),
-=======
             "total" => $this->services->sum("price"),
             "total_bill" => $this->invoices->pluck("total_bill")->sum(),
->>>>>>> dummyData
             "total_payment" => $this->invoices->pluck("total_payment")->sum(),
             "excess_payment" => $this->invoices->pluck("excess_payment")->sum(),
             "status" => $status
