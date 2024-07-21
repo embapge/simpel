@@ -14,7 +14,7 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         $faker = Faker::create("id_ID");
-        $numberDisplay = $faker->randomElement([null, $faker->bothify("######/SMPL/INV/####")]);
+        $numberDisplay = $faker->randomElement([null, $faker->bothify("######/SMPL/TRNSCTN/####")]);
         return [
             "number_display" => $numberDisplay,
             "transaction_sub_type_id" => $faker->randomElement(TransactionSubType::all()->pluck("id")->toArray()),

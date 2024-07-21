@@ -104,7 +104,14 @@ final class DocumentTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::inputText('name', 'name')
+                ->operators(['contains']),
+            Filter::inputText('description', 'description')
+                ->operators(['contains']),
+            Filter::datepicker('created_at', 'created_at'),
+            Filter::datepicker('updated_at', 'updated_at'),
+        ];
     }
 
     #[\Livewire\Attributes\On('edit')]

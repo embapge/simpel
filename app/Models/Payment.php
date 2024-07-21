@@ -16,7 +16,7 @@ class Payment extends Model
     use Notifiable, HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "payments";
-    protected $fillable = ["invoice_id", "amount", "status"];
+    protected $fillable = ["invoice_id", "amount", "status", "created_by"];
     protected $cast = [
         "status" => PaymentStatus::class
     ];

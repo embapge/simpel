@@ -22,9 +22,9 @@ class InvoiceFactory extends Factory
     public function definition(): array
     {
         $faker = Faker::create("id_ID");
-        $numberDisplay = $faker->randomElement([null, $faker->bothify("######/SMPL/INV/####")]);
+        // $numberDisplay = $faker->randomElement([null, $faker->bothify("######/SMPL/INV/####")]);
         return [
-            "number_display" => $numberDisplay,
+            "number_display" => null,
             "type" => $faker->randomElement(["kw", "keu", "inv", "pro"]),
             "status" => $faker->randomElement(['draft', 'unpaid', 'paid', 'lesspaid', 'cancel']),
             "customer_name" => $faker->company(),

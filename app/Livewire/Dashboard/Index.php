@@ -21,8 +21,9 @@ class Index extends Component
     {
         $this->totalCustomer = Customer::all()->count();
         $this->totalTransaction = Transaction::all()->sum("total");
-        $this->totalInvoice = Invoice::all()->sum("total");
-        $this->totalPayment = Payment::all()->sum("amount");
+        $invoices = Invoice::all();
+        $this->totalInvoice = $invoices->sum("total");
+        $this->totalPayment = $invoices->sum("total_payment");
     }
 
     public function render()

@@ -15,7 +15,7 @@ class TransactionService extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "transaction_services";
-    protected $fillable = ["transaction_id", "name", "description", "price"];
+    protected $fillable = ["transaction_id", "name", "description", "price", "created_by"];
 
     protected static function newFactory(): Factory
     {
