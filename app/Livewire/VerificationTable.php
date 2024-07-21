@@ -72,8 +72,6 @@ final class VerificationTable extends PowerGridComponent
             ->add('website')
             ->add('created_at_formatted', fn ($model) => $model->created_at ? Carbon::parse($model->created_at)->translatedFormat('d F Y H:i:s A') : "")
             ->add('updated_at_formatted', fn ($model) => $model->updated_at ? Carbon::parse($model->updated_at)->translatedFormat('d F Y H:i:s A') : "")
-            ->add('created_by')
-            ->add('updated_by')
             ->add('status');
     }
 
@@ -114,14 +112,6 @@ final class VerificationTable extends PowerGridComponent
             Column::make('Updated at', 'updated_at_formatted', 'updated_at')
                 ->sortable()->searchable(),
 
-            Column::make('Created by', 'created_by')
-                ->sortable()
-                ->searchable(),
-
-            Column::make('Updated by', 'updated_by')
-                ->sortable()
-                ->searchable(),
-
             Column::make('Status', 'status')
                 ->sortable()
                 ->searchable(),
@@ -139,8 +129,6 @@ final class VerificationTable extends PowerGridComponent
             Filter::inputText("email")->operators(["contains"]),
             Filter::inputText("phone_number")->operators(["contains"]),
             Filter::inputText("website")->operators(["contains"]),
-            Filter::inputText("created_by")->operators(["contains"]),
-            Filter::inputText("updated_by")->operators(["contains"]),
             Filter::datepicker('verify_at'),
             Filter::datepicker('created_at'),
             Filter::datepicker('updated_at'),

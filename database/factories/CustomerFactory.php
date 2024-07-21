@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -24,6 +25,7 @@ class CustomerFactory extends Factory
             "verify_at" => $faker->dateTimeBetween(),
             "phone_number" => $faker->phoneNumber(),
             "website" => $faker->url(),
+            "created_by" => User::first()->id
         ];
     }
 }

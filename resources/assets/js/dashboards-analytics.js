@@ -36,36 +36,44 @@ let config = {
         totalRevenueChartOptions = {
             series: [
                 {
-                    name: "2021",
+                    name: "Paid",
                     data: [18, 7, 15, 29, 18, 12, 9],
                 },
                 {
-                    name: "2020",
-                    data: [-13, -18, -9, -14, -5, -17, -15],
+                    name: "Unpaid",
+                    data: [18, 7, 15, 29, 18, 12, 9],
+                },
+                {
+                    name: "cancel",
+                    data: [18, 7, 15, 29, 18, 12, 9],
                 },
             ],
             chart: {
-                height: 300,
-                stacked: true,
+                height: 560,
+                stacked: false,
                 type: "bar",
                 toolbar: { show: false },
             },
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    columnWidth: "33%",
-                    borderRadius: 12,
+                    columnWidth: "60%",
+                    borderRadius: 10,
                     startingShape: "rounded",
                     endingShape: "rounded",
                 },
             },
-            colors: [config.colors.primary, config.colors.info],
+            colors: [
+                config.colors.success,
+                config.colors.warning,
+                config.colors.danger,
+            ],
             dataLabels: {
                 enabled: false,
             },
             stroke: {
                 curve: "smooth",
-                width: 6,
+                width: 3,
                 lineCap: "round",
                 colors: [cardColor],
             },

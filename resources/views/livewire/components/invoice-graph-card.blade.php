@@ -92,10 +92,10 @@
                     },
                     yaxis: {
                         labels: {
-                            show: false,
+                            show: true,
                         },
                         min: 10,
-                        max: 500,
+                        max: 50,
                         tickAmount: 4,
                     },
                 };

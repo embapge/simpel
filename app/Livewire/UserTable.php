@@ -55,16 +55,13 @@ final class UserTable extends PowerGridComponent
             ->add('email')
             ->add('role')
             ->add('is_active')
-            ->add('created_at');
+            ->add('created_at_formatted', fn (User $user) => Carbon::parse($user->created_at)->translatedFormat("d F Y"))
+            ->add('updated_at_formatted', fn (User $user) => Carbon::parse($user->updated_at)->translatedFormat("d F Y"));;
     }
 
     public function columns(): array
     {
         return [
-            Column::make('Id', 'id')
-                ->sortable()
-                ->searchable(),
-
             Column::make('Name', 'name')
                 ->sortable()
                 ->searchable(),
@@ -83,9 +80,10 @@ final class UserTable extends PowerGridComponent
                 ->searchable(),
 
             Column::make('Created at', 'created_at_formatted', 'created_at')
-                ->sortable(),
+                ->sortable()
+                ->searchable(),
 
-            Column::make('Created at', 'created_at')
+            Column::make('Updated at', 'updated_at_formatted', 'updated_at')
                 ->sortable()
                 ->searchable(),
 
@@ -95,7 +93,13 @@ final class UserTable extends PowerGridComponent
 
     public function filters(): array
     {
-        return [];
+        return [
+            Filter::inputText('name', 'name')->operators(["contains"]),
+            Filter::inputText('email', 'email')->operators(["contains"]),
+            Filter::inputText('role', 'role')->operators(["contains"]),
+            Filter::datepicker('created_at', 'created_at'),
+            Filter::datepicker('updated_at', 'updated_at'),
+        ];
     }
 
     public function onUpdatedToggleable($id, $field, $value): void

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\CustomerPhone;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -17,7 +18,8 @@ class CustomerPhoneFactory extends Factory
         $faker = Faker::create("id_ID");
         return [
             "number" => $faker->phoneNumber(),
-            "name" => $faker->name()
+            "name" => $faker->name(),
+            "created_by" => User::first()->id
         ];
     }
 }

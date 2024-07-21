@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Document;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -24,7 +25,8 @@ class DocumentFactory extends Factory
         return [
             "name" => $faker->bothify("????????"),
             "description" => $faker->text(),
-            "is_active" => $faker->randomElement([0, 1])
+            "is_active" => $faker->randomElement([0, 1]),
+            "created_by" => User::first()->id
         ];
     }
 }

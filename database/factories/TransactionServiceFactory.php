@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\TransactionService;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Faker\Factory as Faker;
 
@@ -16,6 +17,7 @@ class TransactionServiceFactory extends Factory
             "name" => $faker->bothify("??????????"),
             "description" => $faker->randomElement([null, $faker->text(50)]),
             "price" => $faker->bothify("##########"),
+            "created_by" => User::first()->id
         ];
     }
 }

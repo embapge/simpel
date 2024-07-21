@@ -12,7 +12,7 @@ class InvoiceService extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "invoice_services";
-    protected $fillable = ["invoice_id", "name", "type", "description", "price"];
+    protected $fillable = ["invoice_id", "name", "type", "description", "price", "created_by"];
 
     public function invoice()
     {

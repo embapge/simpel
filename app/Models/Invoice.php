@@ -19,7 +19,7 @@ class Invoice extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "invoices";
-    protected $fillable = ["transaction_id", "number_display", "type", "subtotal", "total", "total_bill", "total_payment", "excess_payment", "tax", "stamp", "customer_name", "customer_pic_name", "customer_address", "customer_phone_number", "customer_email", "internal_note", "issue_date", "due_date", "is_tax"];
+    protected $fillable = ["transaction_id", "number_display", "type", "subtotal", "total", "total_bill", "total_payment", "excess_payment", "tax", "stamp", "customer_name", "customer_pic_name", "customer_address", "customer_phone_number", "customer_email", "internal_note", "issue_date", "due_date", "is_tax", "created_by"];
 
     protected function casts()
     {

@@ -12,7 +12,7 @@ class PaymentTransaction extends Model
     use HasFactory, HasUuids, BlameableTrait;
 
     protected $table = "payment_transactions";
-    protected $fillable = ["payment_id", "response"];
+    protected $fillable = ["payment_id", "response", "created_by"];
 
     public function payment()
     {
