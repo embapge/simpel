@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Invoice;
+use App\Models\Transaction;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -12,6 +14,8 @@ class InvoiceSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        foreach (Transaction::all() as $transaction) {
+            Invoice::factory()->count(3)->for($transaction)->create();
+        }
     }
 }

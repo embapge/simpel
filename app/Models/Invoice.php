@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Casts\NumberDisplayCast;
 use App\Enums\InvoiceType;
 use App\Observers\InvoiceObserver;
+use Database\Factories\InvoiceFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use RichanFongdasen\EloquentBlameable\BlameableTrait;
@@ -24,6 +26,11 @@ class Invoice extends Model
         return [
             "number_display" => NumberDisplayCast::class,
         ];
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return InvoiceFactory::new();
     }
 
     public function transaction()
@@ -58,7 +65,7 @@ class Invoice extends Model
 
     public function calculate()
     {
-        $this->load(["services", "payments"]);
+        $this->load(["services", "paymentPaids"]);
         $subtotal = $this->services->where("type", "beforeTax")->pluck("price")->sum();
         $tax = $this->is_tax ? $subtotal * ppn() : 0;
         $stamp = $this->stamp;

@@ -237,7 +237,7 @@ class Detail extends Component
 
     public function storeHistory()
     {
-        $this->validate(["histories.*.status" => "required", "histories.*.type" => "required"],["histories.*.status.required" => "Status harus diisi", "histories.*.type.required" => "Tipe harus diisi"]);
+        $this->validate(["histories.*.status" => "required", "histories.*.type" => "required"], ["histories.*.status.required" => "Status harus diisi", "histories.*.type.required" => "Tipe harus diisi"]);
 
         try {
             foreach ($this->histories as $iHistory => $history) {
@@ -250,9 +250,8 @@ class Detail extends Component
             //throw $th;
             Toaster::error($th->getMessage());
         }
-
     }
-    
+
     public function sendHistories()
     {
         $this->form->sendHistories();

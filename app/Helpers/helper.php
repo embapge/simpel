@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\PaymentBank;
 use Illuminate\Support\Facades\Storage;
 
 function terbilang($bilangan)
@@ -107,4 +108,17 @@ function paymentColor($status)
     }
 
     return $color;
+}
+
+function paymentVendor($response)
+{
+    if ($response['payment_type'] == "bank_transfer") {
+        if (array_key_exists("permata_va_number", $response)) {
+            return PaymentBank::PERMATA->value;
+        } else if (array_key_exists("biller_code", $response)) {
+            return PaymentBank::MANDIRI->value;
+        } elseif (array_key_exists("va_numbers", $response) && $response["va_numbers"][0]["bank"] == "bca") {
+            return PaymentBank::BCA->value;
+        }
+    }
 }

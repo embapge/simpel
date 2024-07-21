@@ -26,11 +26,10 @@ class FortifyServiceProvider extends ServiceProvider
         {
             public function toResponse($request)
             {
-                if(Auth::user()->role == "customer")
-                {
+                if (Auth::user()->role == "customer") {
                     return redirect('/transaction');
                 }
-                return redirect('/customer');
+                return redirect('/');
             }
         });
     }
