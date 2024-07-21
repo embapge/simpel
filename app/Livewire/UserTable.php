@@ -19,6 +19,7 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class UserTable extends PowerGridComponent
 {
+    public bool $deferLoading = true;
     use WithExport;
 
     public function setUp(): array

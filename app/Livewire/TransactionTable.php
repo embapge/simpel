@@ -26,8 +26,10 @@ use NumberFormatter;
 
 final class TransactionTable extends PowerGridComponent
 {
+    public bool $deferLoading = true;
     protected $listeners = ['transactionRefreshTable' => '$refresh'];
     use WithExport;
+
     public function header(): array
     {
         return [

@@ -21,6 +21,7 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class DocumentTable extends PowerGridComponent
 {
+    public bool $deferLoading = true;
     protected $listeners = ["documentRefreshTable" => '$refresh'];
     use WithExport;
 

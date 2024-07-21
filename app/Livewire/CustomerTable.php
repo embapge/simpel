@@ -25,6 +25,7 @@ use Illuminate\Support\Str;
 
 final class CustomerTable extends PowerGridComponent
 {
+    public bool $deferLoading = true;
     protected $listeners = ['customerRefreshTable' => '$refresh'];
     use WithExport;
     public function header(): array

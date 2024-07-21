@@ -26,6 +26,7 @@ use PowerComponents\LivewirePowerGrid\Traits\WithExport;
 
 final class VerificationTable extends PowerGridComponent
 {
+    public bool $deferLoading = true;
     protected $listeners = ['verificationRefreshTable' => '$refresh'];
 
     use WithExport;
