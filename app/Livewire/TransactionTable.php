@@ -65,10 +65,6 @@ final class TransactionTable extends PowerGridComponent
     {
         $transaction = Transaction::query()->join("customers", fn ($customer) => $customer->on("transactions.customer_id", "=", "customers.id"))->select(["transactions.*", "customers.name as customer_name"]);
 
-        if (Auth::user()->role == "customer") {
-            $transaction = $transaction->where("customer_id", Auth::user()->customer->first()->id);
-        }
-
         return $transaction;
     }
 

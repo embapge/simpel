@@ -59,13 +59,6 @@ final class InvoiceTable extends PowerGridComponent
     public function datasource(): ?Builder
     {
         $invoice = Invoice::with(["transaction"])->select("invoices.*");
-        if (Auth::user()->role == "customer") {
-            $invoice = $invoice->withWhereHas("transaction", function ($q) {
-                $q->withWhereHas("customer", function ($q) {
-                    $q->where("id", Auth::user()->customer->first()->id);
-                });
-            });
-        }
 
         return $invoice;
     }

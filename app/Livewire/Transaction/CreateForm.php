@@ -77,12 +77,6 @@ class CreateForm extends Component
 
     public function render()
     {
-        $customer = new Customer();
-        if (Auth::user()->role === "customer") {
-            $customer = $customer->where("id", Auth::user()->customer->first()->id)->get();
-        } else {
-            $customer = $customer->all();
-        }
-        return view('livewire.transaction.create-form', ["transactionTypes" => $this->transactionType, "customers" => $customer]);
+        return view('livewire.transaction.create-form', ["transactionTypes" => $this->transactionType, "customers" => Customer::all()]);
     }
 }
