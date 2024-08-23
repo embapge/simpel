@@ -27,7 +27,7 @@ class RegistrationController extends Controller
         $validator = Validator::make($request->all(), [
             "name" => "required",
             "pic_name" => "required",
-            "email" => "required|email:rfc,dns",
+            "email" => "required|email:rfc,dns|unique:verifications,email",
             "phone_number" => "required|digits_between:10,13|unique:verifications,phone_number",
             "address" => "required",
             "transaction_type" => "required|uuid",
@@ -40,6 +40,7 @@ class RegistrationController extends Controller
             "phone_number.required" => "Nomor telepon harus diisi",
             "phone_number.digits_between" => "Nomor telepon minimal :min maksimal :max",
             "phone_number.unique" => "Nomor telepon sudah terdaftar",
+            "phone_number.unique" => "Email sudah terdaftar",
             "address.required" => "Alamat perusahaan harus diisi",
             "transaction_type.required" => "Jenis transaksi harus diisi",
             "transaction_type.uuid" => "Jenis transaksi tidak valid",
